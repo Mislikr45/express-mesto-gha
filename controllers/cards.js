@@ -23,10 +23,10 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  const { cardId } = req.body;
-  Card.findByIdAndRemove(cardId, { new: true })
+  const { _id } = req.body;
+  Card.findByIdAndRemove(_id)
     .then((card) => {
-      if (!card) { res.status(404).send({ message: ' Карточка с указанным _id не найдена' }); }
+      if (!card) { res.status(400).send({ message: ' Карточка с указанным _id не найдена' }); }
       res.status(200).send({ data: card });
     });
 };
