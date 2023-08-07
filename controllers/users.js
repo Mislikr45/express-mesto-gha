@@ -23,7 +23,7 @@ module.exports.createUsers = (req, res) => {
 };
 
 module.exports.getUser = (req, res) => {
-  const { _id } = req.user;
+  const { _id } = req.body;
   return User.findById(_id)
     .then((user) => {
       if (!user) { res.status(404).send({ message: 'Пользователь по указанному _id не найден' }); }
