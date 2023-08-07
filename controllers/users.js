@@ -1,5 +1,5 @@
-const User = require('../models/user');
 const mongoose = require('mongoose');
+const User = require('../models/user');
 
 module.exports.getUsers = (req, res) => {
   User.find({}).then((users) => res.status(200).send({ data: users }))
@@ -37,9 +37,12 @@ module.exports.getUser = (req, res, next) => {
     .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию' }));
 };
 
-module.exports.updateUserInfo = (req, res) => {
+module.exports.updateUserInfo = (req, res, next) => {
   const { _id } = req.user;
   const { name, about } = req.body;
+  if (!mongoose.Types.ObjectId.isValid(req.body)) {
+    return next(res.status(400).send({ message: 'Ошибка по умолчанию' }));
+  }
   User.findByIdAndUpdate(_id, { name, about }, { new: true })
     .then((update) => {
       if (!update) { res.status(404).send({ message: 'Пользователь по указанному _id не найден' }); }

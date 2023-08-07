@@ -32,7 +32,7 @@ module.exports.deleteCard = (req, res) => {
 };
 
 module.exports.addLikeCard = (req, res) => {
-  const { cardId } = req.body;
+  const { cardId } = req.params;
   const { _id } = req.user;
   Card.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, { new: true })
     .then((card) => {
