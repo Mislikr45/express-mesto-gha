@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const mongoose = require('mongoose');
 
 module.exports.getUsers = (req, res) => {
   User.find({}).then((users) => res.status(200).send({ data: users }))
@@ -22,8 +23,12 @@ module.exports.createUsers = (req, res) => {
     });
 };
 
-module.exports.getUser = (req, res) => {
+module.exports.getUser = (req, res, next) => {
   const { userId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return next(res.status(400).send({ message: 'Ошибка по умолчанию' }));
+  }
   return User.findById(userId)
     .then((user) => {
       if (!user) { res.status(404).send({ message: 'Пользователь по указанному _id не найден' }); }
