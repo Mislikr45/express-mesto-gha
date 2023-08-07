@@ -24,7 +24,7 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   const { cardId } = req.body;
-  Card.findByIdAndRemove(cardId)
+  Card.findByIdAndRemove(cardId, { new: true })
     .then((card) => {
       if (!card) { res.status(404).send({ message: ' Карточка с указанным _id не найдена' }); }
       res.status(200).send({ data: card });
@@ -36,8 +36,8 @@ module.exports.addLikeCard = (req, res) => {
   const { _id } = req.user;
   Card.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, { new: true })
     .then((card) => {
-      if (!card) { res.status(404).send({ message: 'Передан несуществующий _id карточки' }); }
-      res.status(200).send({ data: card });
+      if (!card) { res.status(400).send({ message: 'Передан несуществующий _id карточки' }); }
+      res.status(201).send({ data: card });
     })
     .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию' }));
 };
@@ -47,7 +47,7 @@ module.exports.deleteLikeCard = (req, res) => {
   const { _id } = req.user;
   Card.findByIdAndUpdate(cardId, { $pull: { likes: _id } }, { new: true })
     .then((card) => {
-      if (!card) { res.status(404).send({ message: 'Передан несуществующий _id карточки' }); }
+      if (!card) { res.status(400).send({ message: 'Передан несуществующий _id карточки' }); }
       res.status(200).send({ data: card });
     })
     .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию' }));
