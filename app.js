@@ -1,5 +1,5 @@
-const express = require('express');
 const path = require('path');
+const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const routesUser = require('./routes/users');
@@ -14,8 +14,10 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect('mongodb://0.0.0.0:27017/mestodb',
-{useNewUrlParser: true });
+mongoose.connect(
+  'mongodb://0.0.0.0:27017/mestodb',
+  { useNewUrlParser: true },
+);
 
 app.use(express.static(path.join(__dirname, 'publick')));
 

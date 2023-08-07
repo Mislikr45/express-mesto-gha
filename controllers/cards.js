@@ -43,7 +43,7 @@ module.exports.deleteLikeCard = (req, res) => {
   const { cardId } = req.body;
   const { _id } = req.user;
   Card.findByIdAndUpdate(cardId, { $pull: { likes: _id } }, { new: true })
-    .then((card) => { if (!card) {return res.status(404).send({ message: 'Передан несуществующий _id карточки' })}
+    .then((card) => { if (!card) { return res.status(404).send({ message: 'Передан несуществующий _id карточки' }); }
       res.status(200).send({ data: card });
     })
     .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию' }));
