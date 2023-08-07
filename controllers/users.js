@@ -26,7 +26,7 @@ module.exports.getUser = (req, res) => {
   const { _id } = req.body;
   return User.findById(_id)
     .then((user) => {
-      if (!user) { res.status(400).send({ message: 'Пользователь по указанному _id не найден' }); }
+      if (!user) { res.status(404).send({ message: 'Пользователь по указанному _id не найден' }); }
       res.status(200).send({ data: user });
     })
     .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию' }));
