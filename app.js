@@ -31,5 +31,4 @@ app.use((req, res, next) => {
 
 app.use(routesUser);
 app.use(routerCards);
-app.listen(PORT, () => { console.log(`application is running on ${PORT}`);
-});
+app.listen(PORT, () => { });
