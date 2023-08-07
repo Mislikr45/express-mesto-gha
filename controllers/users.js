@@ -35,7 +35,7 @@ module.exports.getUser = (req, res) => {
 module.exports.updateUserInfo = (req, res) => {
   const { _id } = req.user;
   const { name, about } = req.body;
-  User.findByIdAndUpdate(_id, { name, about }, { new : true })
+  User.findByIdAndUpdate(_id, { name, about }, { new: true })
     .then((update) => {
       if (!update) { res.status(404).send({ message: 'Пользователь по указанному _id не найден' }); }
       res.status(200).send({ data: update });
@@ -46,7 +46,7 @@ module.exports.updateUserInfo = (req, res) => {
 module.exports.updateUserAvatar = (req, res) => {
   const { _id } = req.user;
   const { avatar } = req.body;
-  User.findByIdAndUpdate(_id, { avatar }, { new : true })
+  User.findByIdAndUpdate(_id, { avatar }, { new: true })
     .then((update) => {
       if (!update) { res.status(404).send({ message: 'Пользователь по указанному _id не найден' }); }
       res.status(200).send({ data: update });
