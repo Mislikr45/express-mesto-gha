@@ -10,7 +10,7 @@ router.get('/users', getUsers);
 router.post('/users', createUsers);
 
 // роут /users/:userId
-router.get('/users/:_id', getUser);
+router.get('/users/?_id', getUser);
 
 // роут /users/me
 router.patch('/users/me', updateUserInfo);
