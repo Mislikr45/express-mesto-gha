@@ -24,5 +24,6 @@ router.patch('/users/me', body('name').isLength({
 
 // роут /users/me/avatar
 router.patch('/users/me/avatar', updateUserAvatar);
+router.patch((req, res) => { res.status(404).send({ message: 'Ресурс не найден' }); });
 
 module.exports = router;

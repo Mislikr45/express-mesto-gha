@@ -53,7 +53,7 @@ module.exports.deleteLikeCard = (req, res, next) => {
   const { cardId } = req.params;
   const { userId } = req.user;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    next(res.status(404).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' }));
+    next(res.status(400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' }));
   }
   Card.findByIdAndUpdate(cardId, { $pull: { likes: userId } }, { new: true })
     .then((card) => {
