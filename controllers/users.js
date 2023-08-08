@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { body, validationResult } = require('express-validator');
 const User = require('../models/user');
 
 module.exports.getUsers = (req, res) => {
@@ -37,15 +38,16 @@ module.exports.getUser = (req, res, next) => {
     .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию' }));
 };
 
-module.exports.updateUserInfo = (req, res, next) => {
+module.exports.updateUserInfo = (req, res) => {
   const { _id } = req.user;
   const { name, about } = req.body;
-
-  if (name.length < 3 || name.length > 30) {
-    return next(res.status(400).send({ message: 'Ошибка по умолчанию' }));
-  }
-  if (about.length < 3 || about.length > 30) {
-    return next(res.status(400).send({ message: 'Ошибка по умолчанию' }));
+  const errors = validationResult(req);
+  // return res.status(200).send( errors )
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      success: false,
+      errors: errors.array(),
+    });
   }
   User.findByIdAndUpdate(_id, { name, about }, { new: true })
     .then((update) => {
