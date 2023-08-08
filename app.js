@@ -13,7 +13,7 @@ const app = express();
 app.use(express.json());
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 mongoose.connect(
   'mongodb://0.0.0.0:27017/mestodb',

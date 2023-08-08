@@ -17,7 +17,7 @@ router.get('/users/:userId', getUser);
 router.patch('/users/me', body('name').isLength({
   min: 2,
   max: 30,
-}), body('aboute').isLength({
+}), body('about').isLength({
   min: 2,
   max: 30,
 }), updateUserInfo);
