@@ -40,7 +40,7 @@ module.exports.getUser = (req, res, next) => {
 module.exports.updateUserInfo = (req, res, next) => {
   const { _id } = req.user;
   const { name, about } = req.body;
-  if (name.length > 3 || name.length < 30) {
+  if (name.length > 3 || name.length < 30 || about.length > 3 || about.length < 30) {
     next(res.status(400).send({ message: 'Ошибка по умолчанию' }));
   }
   User.findByIdAndUpdate(_id, { name, about }, { new: true })
