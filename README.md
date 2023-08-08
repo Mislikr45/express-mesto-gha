@@ -21,4 +21,4 @@ Backend к проектной работе место
 `npm run dev` — запускает сервер с hot-reload
 
 ###### Ссылка на работу
-https://mislikr45.github.io/react-mesto-auth/
+https://github.com/Mislikr45/express-mesto-gha/

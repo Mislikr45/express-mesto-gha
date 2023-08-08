@@ -28,7 +28,9 @@ app.use((req, res, next) => {
 
   next();
 });
-
+app.use((req, res, next) => {
+  next(res.status(404).send({ message: 'Ресурс не найден' }));
+});
 app.use(routesUser);
 app.use(routerCards);
 app.listen(PORT, () => { });
