@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { body, validationResult } = require('express-validator');
+const { validationResult } = require('express-validator');
 const User = require('../models/user');
 
 module.exports.getUsers = (req, res) => {

@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { body, validationResult } = require('express-validator');
 const Card = require('../models/card');
 
 module.exports.getCards = (req, res) => {
@@ -25,7 +24,7 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  const { cardId } = req.body;
+  const { cardId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
     next(res.status(400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' }));
   }
@@ -51,10 +50,10 @@ module.exports.addLikeCard = (req, res, next) => {
 };
 
 module.exports.deleteLikeCard = (req, res, next) => {
-  const { cardId } = req.body;
+  const { cardId } = req.params;
   const { userId } = req.user;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    next(res.status(400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' }));
+    next(res.status(404).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' }));
   }
   Card.findByIdAndUpdate(cardId, { $pull: { likes: userId } }, { new: true })
     .then((card) => {
