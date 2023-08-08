@@ -43,7 +43,7 @@ module.exports.updateUserInfo = (req, res) => {
   const { name, about } = req.body;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(404).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+    res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
   }
   User.findByIdAndUpdate(_id, { name, about }, { new: true })
     .then((update) => {
