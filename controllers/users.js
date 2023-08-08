@@ -37,12 +37,12 @@ module.exports.getUser = (req, res, next) => {
     .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию' }));
 };
 
-module.exports.updateUserInfo = (req, res, next) => {
+module.exports.updateUserInfo = (req, res) => {
   const { _id } = req.user;
   const { name, about } = req.body;
-  if (!mongoose.Types.ObjectId.isValid(req.body)) {
-    return next(res.status(400).send({ message: 'Ошибка по умолчанию' }));
-  }
+  // if (!mongoose.Types.ObjectId.isValid(req.body)) {
+  //   next(res.status(400).send({ message: 'Ошибка по умолчанию' }));
+  // }
   User.findByIdAndUpdate(_id, { name, about }, { new: true })
     .then((update) => {
       if (!update) { res.status(404).send({ message: 'Пользователь по указанному _id не найден' }); }
