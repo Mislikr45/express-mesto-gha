@@ -40,13 +40,17 @@ module.exports.getUser = (req, res, next) => {
 module.exports.updateUserInfo = (req, res, next) => {
   const { _id } = req.user;
   const { name, about } = req.body;
-  if (name.length > 3 || name.length < 30 || about.length > 3 || about.length < 30) {
-    next(res.status(400).send({ message: 'Ошибка по умолчанию' }));
+
+  if (name.length < 3 || name.length > 30 || about.length < 3 || about.length > 30 ) {
+    return next(res.status(400).send({ message: 'Ошибка по умолчанию' }));
   }
+  // if (about.length > 3 || about.length < 30) {
+  //   return next(res.status(400).send({ message: 'Ошибка по умолчанию' }));
+  // }
   User.findByIdAndUpdate(_id, { name, about }, { new: true })
     .then((update) => {
-      if (!update) { res.status(404).send({ message: 'Пользователь по указанному _id не найден' }); }
-      res.status(200).send({ data: update });
+      if (!update) { return res.status(404).send({ message: 'Пользователь по указанному _id не найден' }); }
+      return res.status(200).send({ data: update });
     })
     .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию' }));
 };
