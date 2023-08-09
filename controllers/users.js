@@ -36,8 +36,10 @@ module.exports.getUser = (req, res) => {
   }
   return User.findById(userId)
     .then((user) => {
-      if (!user) { res.status(404).send({ message: 'Пользователь по указанному _id не найден' }); }
-      else { res.status(200).send({ data: user });
+      if (!user) {
+        res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
+      } else {
+        res.status(200).send({ data: user });
       }
     })
     .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию' }));
@@ -48,7 +50,7 @@ module.exports.updateUserInfo = (req, res) => {
   const { name, about } = req.body;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+    res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
   }
   User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true })
     .then((update) => {

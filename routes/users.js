@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const { body } = require('express-validator');
 
 const {
   getUsers, createUsers, getUser, updateUserInfo, updateUserAvatar,
