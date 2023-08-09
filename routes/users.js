@@ -14,7 +14,7 @@ router.post('/users', createUsers);
 router.get('/users/:userId', getUser);
 
 // роут /users/me
-router.patch('/users/me',  updateUserInfo);
+router.patch('/users/me', updateUserInfo);
 
 // роут /users/me/avatar
 router.patch('/users/me/avatar', updateUserAvatar);
