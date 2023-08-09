@@ -19,8 +19,6 @@ mongoose.connect(
   { useNewUrlParser: true },
 );
 
-app.use(express.static(path.join(__dirname, 'publick')));
-
 app.use((req, res, next) => {
   req.user = {
     _id: '64cfd01b51cfacacd06051c0',
@@ -30,4 +28,5 @@ app.use((req, res, next) => {
 });
 app.use(routesUser);
 app.use(routerCards);
+app.patch((req, res) => { res.status(404).send({ message: 'Ресурс не найден' }); });
 app.listen(PORT, () => { });

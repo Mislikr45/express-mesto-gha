@@ -14,16 +14,9 @@ router.post('/users', createUsers);
 router.get('/users/:userId', getUser);
 
 // роут /users/me
-router.patch('/users/me', body('name').isLength({
-  min: 2,
-  max: 30,
-}), body('about').isLength({
-  min: 2,
-  max: 30,
-}), updateUserInfo);
+router.patch('/users/me',  updateUserInfo);
 
 // роут /users/me/avatar
 router.patch('/users/me/avatar', updateUserAvatar);
-router.patch((req, res) => { res.status(404).send({ message: 'Ресурс не найден' }); });
 
 module.exports = router;

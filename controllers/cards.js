@@ -35,11 +35,11 @@ module.exports.deleteCard = (req, res, next) => {
     });
 };
 
-module.exports.addLikeCard = (req, res, next) => {
+module.exports.addLikeCard = (req, res) => {
   const { cardId } = req.params;
   const { userId } = req.user;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    next(res.status(400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' }));
+    res.status(400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' });
   }
   Card.findByIdAndUpdate(cardId, { $addToSet: { likes: userId } }, { new: true })
     .then((card) => {
@@ -49,11 +49,11 @@ module.exports.addLikeCard = (req, res, next) => {
     .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию' }));
 };
 
-module.exports.deleteLikeCard = (req, res, next) => {
+module.exports.deleteLikeCard = (req, res) => {
   const { cardId } = req.params;
   const { userId } = req.user;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    next(res.status(400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' }));
+    res.status(400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' });
   }
   Card.findByIdAndUpdate(cardId, { $pull: { likes: userId } }, { new: true })
     .then((card) => {
