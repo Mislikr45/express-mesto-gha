@@ -1,7 +1,7 @@
 {
-  "name": "ya",
+  "name": "Sergey",
   "version": "1.0.0",
-  "description": "",
+  "description": "education",
   "main": "index.js",
   "scripts": {
     "lint": "npx eslint .",
