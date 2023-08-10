@@ -30,11 +30,10 @@ module.exports.createUsers = (req, res) => {
 
 module.exports.getUser = (req, res) => {
   const { userId } = req.params;
-
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return (res.status(ERROR_CODE_400).send({ message: 'Ошибка по умолчанию' }));
   }
-  return User.findById(userId)
+  User.findById(userId)
     .then((user) => {
       if (!user) {
         res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
@@ -46,16 +45,15 @@ module.exports.getUser = (req, res) => {
 };
 
 module.exports.updateUserInfo = (req, res) => {
-  const { _id } = req.user;
   const { name, about } = req.body;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+    return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
   }
-  User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((update) => {
       if (!update) { return res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' }); }
-      return res.send({ data: update });
+      res.send({ data: update });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -65,9 +63,8 @@ module.exports.updateUserInfo = (req, res) => {
 };
 
 module.exports.updateUserAvatar = (req, res) => {
-  const { _id } = req.user;
   const { avatar } = req.body;
-  User.findByIdAndUpdate(_id, { avatar }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((update) => {
       if (!update) {
         res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });

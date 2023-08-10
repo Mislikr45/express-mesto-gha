@@ -27,25 +27,25 @@ module.exports.createCard = (req, res) => {
     });
 };
 
-module.exports.deleteCard = (req, res, next) => {
+module.exports.deleteCard = (req, res) => {
   const { cardId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    next(res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' }));
+    res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' });
   }
   Card.findByIdAndRemove(cardId)
     .then((card) => {
       if (!card) { res.status(ERROR_CODE_404).send({ message: ' Карточка с указанным _id не найдена' }); }
       res.send({ data: card });
-    });
+    })
+    .catch(() => res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }));
 };
 
 module.exports.addLikeCard = (req, res) => {
   const { cardId } = req.params;
-  const { userId } = req.user;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' });
+    return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' });
   }
-  Card.findByIdAndUpdate(cardId, { $addToSet: { likes: userId } }, { new: true })
+  Card.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (!card) { res.status(ERROR_CODE_404).send({ message: 'Передан несуществующий _id карточки' }); }
       res.status(201).send({ data: card });
@@ -55,11 +55,10 @@ module.exports.addLikeCard = (req, res) => {
 
 module.exports.deleteLikeCard = (req, res) => {
   const { cardId } = req.params;
-  const { userId } = req.user;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' });
+    return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' });
   }
-  Card.findByIdAndUpdate(cardId, { $pull: { likes: userId } }, { new: true })
+  Card.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (!card) { res.status(ERROR_CODE_404).send({ message: 'Передан несуществующий _id карточки' }); }
       res.send({ data: card });
