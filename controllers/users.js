@@ -33,7 +33,7 @@ module.exports.getUser = (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return (res.status(ERROR_CODE_400).send({ message: 'Ошибка по умолчанию' }));
   }
-  User.findById(userId)
+  return User.findById(userId)
     .then((user) => {
       if (!user) {
         res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
@@ -50,10 +50,10 @@ module.exports.updateUserInfo = (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
   }
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+  return User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((update) => {
       if (!update) { return res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' }); }
-      res.send({ data: update });
+      return res.send({ data: update });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -75,4 +75,3 @@ module.exports.updateUserAvatar = (req, res) => {
       } else { res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }); }
     });
 };
-

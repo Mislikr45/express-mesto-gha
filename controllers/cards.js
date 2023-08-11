@@ -32,7 +32,7 @@ module.exports.deleteCard = (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
     return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' });
   }
-  Card.findByIdAndRemove(cardId)
+  return Card.findByIdAndRemove(cardId)
     .then((card) => {
       if (!card) { res.status(ERROR_CODE_404).send({ message: ' Карточка с указанным _id не найдена' }); }
       res.send({ data: card });
@@ -45,7 +45,7 @@ module.exports.addLikeCard = (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
     return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' });
   }
-  Card.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
+  return Card.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (!card) { res.status(ERROR_CODE_404).send({ message: 'Передан несуществующий _id карточки' }); }
       res.status(201).send({ data: card });
@@ -58,7 +58,7 @@ module.exports.deleteLikeCard = (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
     return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' });
   }
-  Card.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
+  return Card.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (!card) { res.status(ERROR_CODE_404).send({ message: 'Передан несуществующий _id карточки' }); }
       res.send({ data: card });
