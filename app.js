@@ -62,6 +62,7 @@ app.use(auth);
 app.use(routesUser);
 app.use(routerCards);
 app.use((req, res) => { res.status(404).send({ message: 'Ресурс не найден' }); });
+app.use(errors());
 app.use((err, req, res, next) => {
   // если у ошибки нет статуса, выставляем 500
   const { statusCode = 500, message } = err;
