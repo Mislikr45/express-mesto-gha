@@ -32,6 +32,14 @@ mongoose.connect(
 //   next();
 // });
 
+app.use((req, res, next) => {
+  if (req.url === '/signup' || req.url === '/signin') {
+    next(); // Skip auth for signup and signin
+  } else {
+    auth(req, res, next); // Apply authMiddleware for other routes
+  }
+});
+
 app.post('/signin', celebrate({
   body: Joi.object().keys({
     password: Joi.string().required().min(8),
