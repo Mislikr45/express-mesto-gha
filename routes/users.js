@@ -9,7 +9,7 @@ const {
 const url = /^(https?:\/\/)?([A-Za-z0-9-]+\.)+[A-Za-z]{2,}(:\d{2,5})?(\/[^\s]*)?$/;
 
 // роут users
-router.get('/users', getUsers);
+router.get('/users', auth, getUsers);
 
 // роут /users/:userId
 router.get('/users/:userId', auth, celebrate({
