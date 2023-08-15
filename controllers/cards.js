@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 const Card = require('../models/card');
 
 const ERROR_CODE_400 = 400;
@@ -28,14 +29,13 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  // const userId = req.user._id;
+  const { token } = req.cookies;
+  const payload = jwt.decode(token);
+  const userId = payload._id;
   const { cardId } = req.body;
-  if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные.' });
-  }
-  return Card.findByIdAndRemove(cardId)
+  Card.findByIdAndRemove(cardId)
     .then((card) => {
-      if (!card) { res.status(ERROR_CODE_404).send({ message: ' Карточка с указанным _id не найдена' }); }
+      if (!card) { return res.status(ERROR_CODE_404).send({ message: ' Карточка с указанным _id не найдена' }); }
       if (String(card.owner) !== String( userId )) {
         return res
           .status(403)
