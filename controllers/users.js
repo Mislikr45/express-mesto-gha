@@ -19,12 +19,9 @@ module.exports.login = (req, res) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const payload = { _id: user._id };
-      const token = jwt.sign(payload, 'your-secret-key', { expiresIn: '7d' });
+      const token = jwt.sign(payload, 'super-strong-secret', { expiresIn: '7d' });
 
-      res.cookie('token', token, {
-        httpOnly: true,
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      }); // 7 days
+      res.cookie('jwt', token);
       res.send({ user, token });
     })
     .catch((err) => {
