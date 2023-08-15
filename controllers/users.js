@@ -36,8 +36,17 @@ module.exports.createUser = (req, res) => {
       email: req.body.email,
       password: hash,
     }))
-    .then((usernew) => res.status(201).send(usernew))
+    .then((usernew) => res.status(201).send({
+      _id: usernew._id,
+      email: usernew.email,
+      name: usernew.name,
+      about: usernew.about,
+      avatar: usernew.avatar,
+    }))
     .catch((err) => {
+      if (err.code === 11000) {
+        return res.send({ message: 'пользователь с таким email существует' });
+      }
       if (err.name === 'ValidationError') {
         res.status(ERROR_CODE_400).send({
           message: `${Object.values(err.errors)
