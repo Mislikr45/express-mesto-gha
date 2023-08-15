@@ -3,7 +3,7 @@ const { celebrate, Joi } = require('celebrate');
 const auth = require('../middlewares/auth');
 
 const {
-  getUsers, getUser, updateUserInfo, updateUserAvatar
+  getUsers, getUser, updateUserInfo, updateUserAvatar, getMe,
 } = require('../controllers/users');
 
 const url = /^(https?:\/\/)?([A-Za-z0-9-]+\.)+[A-Za-z]{2,}(:\d{2,5})?(\/[^\s]*)?$/;
@@ -18,15 +18,13 @@ router.get('/users/:userId', auth, celebrate({
   }),
 }), getUser);
 
-
-
-// // роут /users/me
-// router.patch('/users/me', auth, celebrate({
-//   body: Joi.object().keys({
-//     name: Joi.string().min(2).max(30),
-//     about: Joi.string().min(2).max(30),
-//   }),
-// }), updateUserInfo);
+// роут /users/me
+router.patch('/users/me', auth, celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+  }),
+}), updateUserInfo);
 
 // роут /users/me/avatar
 router.patch('/users/me/avatar', auth, celebrate({
@@ -35,6 +33,7 @@ router.patch('/users/me/avatar', auth, celebrate({
   }),
 }), updateUserAvatar);
 
-
+// роут users
+router.get('/users', getMe);
 
 module.exports = router;

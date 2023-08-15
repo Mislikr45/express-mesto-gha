@@ -26,13 +26,13 @@ mongoose.connect(
   { useNewUrlParser: true },
 );
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '64db6c3383f57e51918a264a',
-  };
+// app.use((req, res, next) => {
+//   req.user = {
+//     _id: '64db6c3383f57e51918a264a',
+//   };
 
-  next();
-});
+//   next();
+// });
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
