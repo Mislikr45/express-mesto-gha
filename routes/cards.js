@@ -6,18 +6,18 @@ const {
 } = require('../controllers/cards');
 
 // роутер /cards
-router.get('/cards', auth, getCards);
+router.get('/cards', getCards);
 
-router.post('/cards', auth, createCard);
+router.post('/cards', createCard);
 
 // роутер /cards/:cardId удаление карточки
 
-router.delete('/cards/:cardId', auth, deleteCard);
+router.delete('/cards/:cardId', deleteCard);
 
 // роутер /cards/:cardId/likes
 
-router.put('/cards/:cardId/likes', auth, addLikeCard);
+router.put('/cards/:cardId/likes', addLikeCard);
 
-router.delete('/cards/:cardId/likes', auth, deleteLikeCard);
+router.delete('/cards/:cardId/likes', deleteLikeCard);
 
 module.exports = router;
