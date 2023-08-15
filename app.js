@@ -2,7 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const { celebrate, Joi, errors} = require('celebrate');
-
 const routesUser = require('./routes/users');
 const routerCards = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
@@ -56,8 +55,6 @@ app.post('/signup', celebrate({
     avatar: Joi.string().pattern(url),
   }),
 }), createUser);
-
-app.use(auth);
 
 app.use(routesUser);
 app.use(routerCards);

@@ -16,8 +16,6 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
-  // res.send(req.body);
-
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign(
