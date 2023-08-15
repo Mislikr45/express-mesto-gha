@@ -10,7 +10,7 @@ const extractBearerToken = (header) => { header.replace('Bearer ', '');
 };
 
 module.exports = (req, res, next) => {
-  const { authorization } = req.headers;
+  const { authorization } = req.cookies.jwt;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
     return handleAuthError(res);
