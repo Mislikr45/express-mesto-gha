@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
+const auth = require('../middlewares/auth');
 
 const {
   getUsers, getUser, updateUserInfo, updateUserAvatar
@@ -26,7 +27,7 @@ router.patch('/users/me', celebrate({
 }), updateUserInfo);
 
 // роут /users/me/avatar
-router.patch('/users/me/avatar', celebrate({
+router.patch('/users/me/avatar', auth, celebrate({
   body: Joi.object().keys({
     avatar: Joi.string().pattern(url),
   }),
