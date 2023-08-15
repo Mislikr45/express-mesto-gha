@@ -82,7 +82,7 @@ module.exports.createUser = (req, res) => {
 // };
 
 module.exports.getUser = (req, res) => {
-  const { userId } = req.body;
+  const { userId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return (res.status(ERROR_CODE_400).send({ message: 'Ошибка по умолчанию' }));
   }
