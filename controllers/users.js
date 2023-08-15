@@ -18,18 +18,12 @@ module.exports.login = (req, res) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id },
-        'super-strong-secret',
-        { expiresIn: '7d' },
-      );
-      // вернём токен
-      res.send({ token });
+      res.send({
+        token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' }),
+      });
     })
     .catch((err) => {
-      res
-        .status(401)
-        .send({ message: err.message });
+      res.status(401).send({ message: err.message });
     });
 };
 
