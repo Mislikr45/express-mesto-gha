@@ -45,7 +45,7 @@ module.exports.createUser = (req, res) => {
     }))
     .catch((err) => {
       if (err.code === 11000) {
-        return res.send({ message: 'пользователь с таким email существует' });
+        return res.send.status(409)({ message: 'пользователь с таким email существует' });
       }
       if (err.name === 'ValidationError') {
         res.status(ERROR_CODE_400).send({
@@ -60,30 +60,40 @@ module.exports.createUser = (req, res) => {
 };
 
 // module.exports.getUser = (req, res) => {
-//   const { userId } = req.params;
-//   if (!mongoose.Types.ObjectId.isValid(userId)) {
-//     return (res.status(ERROR_CODE_400).send({ message: 'Ошибка по умолчанию' }));
-//   }
-//   return User.findById(userId)
-//     .then((user) => {
-//       if (!user) {
-//         res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
-//       } else {
-//         res.send({ data: user });
-//       }
-//     })
+//   const { token } = req.cookies;
+//   const payload = jwt.decode(token);
+//   User.findById(payload).then((getUser) => {
+//     if (!getUser) {
+//       res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
+//     } else { res.send({ data: getUser }); }
+//   })
+//     .catch(() => res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }));
+// };
+
+// module.exports.getUser = (req, res) => {
+//   const { token } = req.cookies;
+//   const payload = jwt.decode(token);
+//   User.findById(payload).then((getUser) => {
+//     if (!getUser) {
+//       res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
+//     } else { res.send({ data: getUser }); }
+//   })
 //     .catch(() => res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }));
 // };
 
 module.exports.getUser = (req, res) => {
-  const { token } = req.cookies;
-  const payload = jwt.decode(token);
-  User.findById(payload).then((getUser) => {
-    if (!getUser) {
-      res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
-    } else { res.send({ data: getUser }); }
-  })
-    .catch(() => res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }));
+  const { userId } = req.body;
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return (res.status(ERROR_CODE_400).send({ message: 'Ошибка по умолчанию' }));
+  }
+  return User.findById(userId)
+    .then((user) => {
+      if (!user) {
+        res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
+      } else {
+        res.send({ data: user });
+      }
+    }).catch(() => res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }));
 };
 
 module.exports.updateUserInfo = (req, res) => {
