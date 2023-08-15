@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 // const validator = require('validator');
 const { validationResult } = require('express-validator');
@@ -66,6 +66,7 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.getMe = (req, res) => {
+  res.send({ message: 'Пользователь по указанному _id не найден' });
   const { token } = req.cookies;
   const payload = jwt.decode(token);
   User.findById(payload._id).then((getUser) => {
@@ -78,9 +79,6 @@ module.exports.getMe = (req, res) => {
 
 module.exports.getUser = (req, res) => {
   const { userId } = req.body;
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    return (res.status(ERROR_CODE_400).send({ message: 'Ошибка по умолчанию' }));
-  }
   return User.findById(userId)
     .then((user) => {
       if (!user) {

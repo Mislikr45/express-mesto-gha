@@ -15,7 +15,7 @@ const auth = (req, res, next) => {
   const token = authorization.replace('Bearer ', '');
   let payload;
   try {
-    payload = jwt.verify(token, 'super-strong-secret');
+    payload = jwt.verify(token, 'your-secret-key');
   } catch (err) {
     return handleAuthError(res);
   }
