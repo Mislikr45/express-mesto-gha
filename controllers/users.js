@@ -75,19 +75,19 @@ module.exports.createUser = (req, res) => {
 //     .catch(() => res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }));
 // };
 
-module.exports.getUser = (req, res) => {
-  const { token } = req.cookies;
-  const payload = jwt.decode(token);
-  User.findById(payload).then((getUser) => {
-    if (!getUser) {
-      res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
-    } else { res.send({ data: getUser }); }
-  })
-    .catch(() => res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }));
-};
+// module.exports.getUser = (req, res) => {
+//   const { token } = req.cookies;
+//   const payload = jwt.decode(token);
+//   User.findById(payload._id).then((getUser) => {
+//     if (!getUser) {
+//       res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
+//     } else { res.send({ data: getUser }); }
+//   })
+//     .catch(() => res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }));
+// };
 
 module.exports.getUser = (req, res) => {
-  const { userId } = req.params;
+  const { userId } = req.body;
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return (res.status(ERROR_CODE_400).send({ message: 'Ошибка по умолчанию' }));
   }

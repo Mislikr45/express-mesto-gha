@@ -18,13 +18,15 @@ router.get('/users/:userId', auth, celebrate({
   }),
 }), getUser);
 
-// роут /users/me
-router.patch('/users/me', auth, celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
-  }),
-}), updateUserInfo);
+
+
+// // роут /users/me
+// router.patch('/users/me', auth, celebrate({
+//   body: Joi.object().keys({
+//     name: Joi.string().min(2).max(30),
+//     about: Joi.string().min(2).max(30),
+//   }),
+// }), updateUserInfo);
 
 // роут /users/me/avatar
 router.patch('/users/me/avatar', auth, celebrate({
@@ -32,5 +34,7 @@ router.patch('/users/me/avatar', auth, celebrate({
     avatar: Joi.string().pattern(url),
   }),
 }), updateUserAvatar);
+
+
 
 module.exports = router;
