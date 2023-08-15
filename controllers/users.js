@@ -44,7 +44,7 @@ module.exports.createUser = (req, res) => {
       avatar: usernew.avatar,
     }))
     .catch((err) => {
-      if (err.code === 11000) {
+      if (err.name === 11000) {
         return res.send.status(409)({ message: 'пользователь с таким email существует' });
       }
       if (err.name === 'ValidationError') {
