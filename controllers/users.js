@@ -71,16 +71,16 @@ module.exports.createUser = (req, res) => {
 //     .catch(() => res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }));
 // };
 
-// module.exports.getUser = (req, res) => {
-//   const { token } = req.cookies;
-//   const payload = jwt.decode(token);
-//   User.findById(payload).then((getUser) => {
-//     if (!getUser) {
-//       res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
-//     } else { res.send({ data: getUser }); }
-//   })
-//     .catch(() => res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }));
-// };
+module.exports.getUser = (req, res) => {
+  const { token } = req.cookies;
+  const payload = jwt.decode(token);
+  User.findById(payload).then((getUser) => {
+    if (!getUser) {
+      res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
+    } else { res.send({ data: getUser }); }
+  })
+    .catch(() => res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }));
+};
 
 module.exports.getUser = (req, res) => {
   const { userId } = req.params;
@@ -99,25 +99,25 @@ module.exports.getUser = (req, res) => {
 
 module.exports.updateUserInfo = (req, res) => {
   const { name, about } = req.body;
-  // // const errors = validationResult(req);
-  // // const { token } = req.cookies;
-  // // const payload = jwt.decode(token);
-  // res.send(req);
-  // // if (!errors.isEmpty()) {
-  // //   return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
-  // // }
-  // // return User.findByIdAndUpdate(payload,
-  // //   { name, about },
-  // //   { new: true, runValidators: true }
-  // // ).then((update) => {
-  // //     if (!update) { return res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' }); }
-  // //     return res.send({ data: update });
-  // //   })
-  // //   .catch((err) => {
-  // //     if (err.name === 'ValidationError') {
-  // //       res.status(ERROR_CODE_400).send({ message: 'Ошибка по умолчанию' });
-  // //     } else { res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }); }
-  // //   });
+   const errors = validationResult(req);
+   const { token } = req.cookies;
+   const payload = jwt.decode(token);
+  res.send(req);
+   if (!errors.isEmpty()) {
+   return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+   }
+   return User.findByIdAndUpdate(payload,
+    { name, about },
+    { new: true, runValidators: true }
+  ).then((update) => {
+    if (!update) { return res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' }); }
+      return res.send({ data: update });
+   })
+   .catch((err) => {
+      if (err.name === 'ValidationError') {
+       res.status(ERROR_CODE_400).send({ message: 'Ошибка по умолчанию' });
+       } else { res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }); }
+    });
 };
 
 module.exports.updateUserAvatar = (req, res) => {
