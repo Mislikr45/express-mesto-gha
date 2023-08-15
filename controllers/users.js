@@ -18,10 +18,14 @@ module.exports.login = (req, res) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      res.send({
+      const payload = { _id: user._id };
+      const token = jwt.sign(payload, 'your-secret-key', { expiresIn: '7d' });
 
-        token: jwt.sign({ _id: user._id, email: user.email }, 'your-secret-key', { expiresIn: '7d' }),
-      });
+      res.cookie('token', token, {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      }); // 7 days
+      res.send({ user, token });
     })
     .catch((err) => {
       res.status(401).send({ message: err.message });
@@ -99,16 +103,10 @@ module.exports.getUser = (req, res) => {
 
 module.exports.updateUserInfo = (req, res) => {
   const { name, about } = req.body;
-   const errors = validationResult(req);
-   const { token } = req.cookies;
-   const payload = jwt.decode(token);
-  res.send(req);
-   if (!errors.isEmpty()) {
-   return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
-   }
-   return User.findByIdAndUpdate(payload,
+  const token = req.cookies.jwt;
+  const payload = jwt.decode(token);
+  User.findByIdAndUpdate(payload._id,
     { name, about },
-    { new: true, runValidators: true }
   ).then((update) => {
     if (!update) { return res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' }); }
       return res.send({ data: update });
@@ -123,10 +121,9 @@ module.exports.updateUserInfo = (req, res) => {
 module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   const errors = validationResult(req);
-  const { token } = req.cookies;
+  const token = req.cookies.jwt;
   const payload = jwt.decode(token);
-
-  User.findByIdAndUpdate(payload,
+  User.findByIdAndUpdate(payload._id,
       { avatar },
       { new: true, runValidators: true })
     .then((update) => {

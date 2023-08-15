@@ -6,24 +6,20 @@ const handleAuthError = (res) => {
     .send({ message: 'Необходима авторизация' });
 };
 
-const extractBearerToken = (header) => { header.replace('Bearer ', '');
-};
-
 const auth = (req, res, next) => {
-  const { authorization } = req.headers;
-  res.send(req.headers);
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return handleAuthError(res);
+  const authorization = req.cookies.jwt;
+  // res.send(authorization);
+  if (!authorization || !authorization.startsWith('')) {
+    return handleAuthError(res.status(401).send({ message: 'Необходима авторизация' }));
   }
-  const token = extractBearerToken(authorization);
+  const token = authorization.replace('Bearer ', '');
   let payload;
-
   try {
-    payload = jwt.verify(token, 'your-secret-key');
+    payload = jwt.verify(token, 'super-strong-secret');
   } catch (err) {
     return handleAuthError(res);
   }
-  req.user = payload; // записываем пейлоуд в объект запроса
+  req.user = payload._id; // записываем пейлоуд в объект запроса
   next(); // пропускаем запрос дальше
 };
 
