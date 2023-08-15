@@ -49,16 +49,17 @@ module.exports.createUser = (req, res) => {
       avatar: usernew.avatar,
     }))
     .catch((err) => {
+      // res.send(err.code);
       if (err.code === 11000) {
-        return res.send.status(409)({ message: 'пользователь с таким email существует' });
+        // return res.send({ message: 'gbplf' })
+        return res.status(409).send({ message: err.message });
       }
       if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE_400).send({
+        return res.status(ERROR_CODE_400).send({
           message: `${Object.values(err.errors)
             .map((error) => error.message)
             .join(', ')}`,
         });
-        return;
       }
       res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' });
     });
@@ -107,6 +108,7 @@ module.exports.updateUserInfo = (req, res) => {
   const payload = jwt.decode(token);
   User.findByIdAndUpdate(payload._id,
     { name, about },
+    { new: true },
   ).then((update) => {
     if (!update) { return res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' }); }
       return res.send({ data: update });
@@ -125,8 +127,8 @@ module.exports.updateUserAvatar = (req, res) => {
   const payload = jwt.decode(token);
   User.findByIdAndUpdate(payload._id,
       { avatar },
-      { new: true, runValidators: true })
-    .then((update) => {
+      { new: true },
+  ).then((update) => {
       if (!update) {
         res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
       } else { res.send({ data: update }); }
