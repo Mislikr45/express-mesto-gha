@@ -97,7 +97,7 @@ module.exports.getUser = (req, res) => {
 };
 
 module.exports.updateUserInfo = (req, res) => {
-  const { name, about } = req.body;
+  const { name, about } = req.params;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
@@ -115,7 +115,7 @@ module.exports.updateUserInfo = (req, res) => {
 };
 
 module.exports.updateUserAvatar = (req, res) => {
-  const { avatar } = req.body;
+  const { avatar } = req.params;
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((update) => {
       if (!update) {
