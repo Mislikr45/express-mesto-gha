@@ -28,13 +28,19 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
+  const userId = req.user._id;
   const { cardId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' });
+    return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные.' });
   }
   return Card.findByIdAndRemove(cardId)
     .then((card) => {
       if (!card) { res.status(ERROR_CODE_404).send({ message: ' Карточка с указанным _id не найдена' }); }
+      if (String(card.owner) !== String(userId)) {
+        return res
+          .status(403)
+          .json({ message: 'You do not have permission to delete this card' });
+      }
       res.send({ data: card });
     })
     .catch(() => res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }));
