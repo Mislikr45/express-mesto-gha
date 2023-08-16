@@ -19,7 +19,6 @@ const auth = (req, res, next) => {
   } catch (err) {
     return handleAuthError(res);
   }
-  res.send({ message: 'кукуево' });
   req.user = payload._id; // записываем пейлоуд в объект запроса
   next(); // пропускаем запрос дальше
 };
