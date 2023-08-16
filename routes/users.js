@@ -23,6 +23,7 @@ router.get('/users/:userId', auth, celebrate({
   }),
 }), getUser);
 
+
 // роут /users/me
 router.patch('/users/me', auth, celebrate({
   body: Joi.object().keys({
