@@ -1,7 +1,5 @@
-// const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-// const validator = require('validator');
-const { validationResult } = require('express-validator');
+// const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
@@ -31,7 +29,7 @@ module.exports.login = (req, res) => {
 
 module.exports.createUser = (req, res) => {
   bcrypt.hash(req.body.password, 10)
-    .then( (hash) => User.create({
+    .then((hash) => User.create({
       name: req.body.name,
       about: req.body.about,
       avatar: req.body.avatar,
@@ -46,7 +44,6 @@ module.exports.createUser = (req, res) => {
       avatar: usernew.avatar,
     }))
     .catch((err) => {
-      // res.send(err.code);
       if (err.code === 11000) {
         // return res.send({ message: 'gbplf' })
         return res.status(409).send({ message: err.message });
@@ -58,14 +55,16 @@ module.exports.createUser = (req, res) => {
             .join(', ')}`,
         });
       }
-      res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' });
+      return res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' });
     });
 };
 
 module.exports.getMe = (req, res) => {
   const { token } = req.cookies;
   const payload = jwt.decode(token);
-  return User.findById(payload._id)
+  const { userId } = payload.jwt;
+  res.send(userId);
+  return User.findById(userId)
     .then((user) => {
       if (!user) {
         res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
@@ -96,30 +95,29 @@ module.exports.updateUserInfo = (req, res) => {
     { new: true },
   ).then((update) => {
     if (!update) { return res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' }); }
-      return res.send({ data: update });
-   })
-   .catch((err) => {
+    return res.send({ data: update });
+  })
+    .catch((err) => {
       if (err.name === 'ValidationError') {
-       res.status(ERROR_CODE_400).send({ message: 'Ошибка по умолчанию' });
-       } else { res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }); }
+        res.status(ERROR_CODE_400).send({ message: 'Ошибка по умолчанию' });
+      } else { res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }); }
     });
 };
 
 module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
-  const errors = validationResult(req);
   const token = req.cookies.jwt;
   const payload = jwt.decode(token);
   User.findByIdAndUpdate(payload._id,
-      { avatar },
-      { new: true },
+    { avatar },
+    { new: true },
   ).then((update) => {
-      if (!update) {
-        res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
-      } else { res.send({ data: update }); }
-    }).catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE_400).send({ message: 'Ошибка по умолчанию' });
-      } else { res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }); }
-    });
+    if (!update) {
+      res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
+    } else { res.send({ data: update }); }
+  }).catch((err) => {
+    if (err.name === 'ValidationError') {
+      res.status(ERROR_CODE_400).send({ message: 'Ошибка по умолчанию' });
+    } else { res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }); }
+  });
 };

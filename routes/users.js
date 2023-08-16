@@ -23,7 +23,6 @@ router.get('/users/:userId', auth, celebrate({
   }),
 }), getUser);
 
-
 // роут /users/me
 router.patch('/users/me', auth, celebrate({
   body: Joi.object().keys({
@@ -40,6 +39,6 @@ router.patch('/users/me/avatar', auth, celebrate({
 }), updateUserAvatar);
 
 // роут users
-router.get('/users/me', getMe);
+router.get('/users/me', auth, getMe);
 
 module.exports = router;

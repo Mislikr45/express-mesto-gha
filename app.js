@@ -3,11 +3,10 @@ const bodyParser = require('body-parser');
 const cookies = require('cookie-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const { celebrate, Joi, errors} = require('celebrate');
+const { celebrate, Joi, errors } = require('celebrate');
 const routesUser = require('./routes/users');
 const routerCards = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
-const auth = require('./middlewares/auth');
 
 const url = /^(https?:\/\/)?([A-Za-z0-9-]+\.)+[A-Za-z]{2,}(:\d{2,5})?(\/[^\s]*)?$/;
 
@@ -47,7 +46,7 @@ app.use(routesUser);
 app.use(routerCards);
 app.use((req, res) => { res.status(404).send({ message: 'Ресурс не найден' }); });
 app.use(errors());
-app.use((err, req, res, next) => {
+app.use((err, res) => {
   // если у ошибки нет статуса, выставляем 500
   const { statusCode = 500, message } = err;
 
@@ -57,7 +56,7 @@ app.use((err, req, res, next) => {
       // проверяем статус и выставляем сообщение в зависимости от него
       message: statusCode === 500
         ? 'На сервере произошла ошибка'
-        : message
+        : message,
     });
 });
 app.listen(PORT, () => { });

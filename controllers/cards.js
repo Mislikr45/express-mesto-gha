@@ -29,7 +29,6 @@ module.exports.createCard = (req, res) => {
     });
 };
 
-
 module.exports.deleteCard = (req, res) => {
   const { cardId } = req.params;
   return Card.findByIdAndRemove(cardId)
@@ -38,12 +37,12 @@ module.exports.deleteCard = (req, res) => {
       const payload = jwt.decode(token);
       const userId = payload._id;
       if (!card) { return res.status(ERROR_CODE_404).send({ message: ' Карточка с указанным _id не найдена' }); }
-      if (String(card.owner) !== String( userId )) {
+      if (String(card.owner) !== String(userId)) {
         return res
           .status(403)
           .json({ message: 'You do not have permission to delete this card' });
       }
-      res.send({ data: card });
+      return res.send({ data: card });
     })
     .catch(() => res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }));
 };
