@@ -21,11 +21,7 @@ router.post('/cards', celebrate({
 
 // роутер /cards/:cardId удаление карточки
 
-router.delete('/cards/:cardId', celebrate({
-  body: Joi.object().keys({
-    cardId: Joi.string().length(24).hex().required(),
-  }),
-}), deleteCard);
+router.delete('/cards/:cardId', deleteCard);
 
 // роутер /cards/:cardId/likes
 
