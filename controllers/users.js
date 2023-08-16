@@ -76,8 +76,7 @@ module.exports.createUser = (req, res) => {
 module.exports.getMe = (req, res) => {
   const { token } = req.cookies;
   const payload = jwt.decode(token);
-  res.send(payload);
-  return User.findById(userId)
+  return User.findById(payload._id)
     .then((user) => {
       if (!user) {
         res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
@@ -86,8 +85,6 @@ module.exports.getMe = (req, res) => {
       }
     }).catch(() => res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }));
 };
-
-
 
 
 module.exports.getUser = (req, res) => {
