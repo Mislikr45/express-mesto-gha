@@ -3,10 +3,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
-const ERROR_CODE_400 = 400;
-const ERROR_CODE_404 = 404;
-const ERROR_CODE_500 = 500;
-
 // 400
 const BadRequestError = require('../errors/BadRequestError');
 // 404
@@ -17,7 +13,6 @@ const DefaultErore = require('../errors/DefaultErore');
 const EmailErrors = require('../errors/EmailErrors');
 // 401
 const AuthorizationError = require('../errors/AuthorizationError');
-
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
@@ -35,11 +30,12 @@ module.exports.login = (req, res, next) => {
 
 module.exports.getMe = (req, res, next) => {
   const _id = req.user;
-  // res.send(_id);
   return User.findById(_id)
     .then((user) => {
       if (!user) {
-        res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
+        next(new NotFoundError(
+          'Пользователь по указанному _id не найден',
+        ));
       } else {
         res.send({ data: user });
       }
@@ -55,7 +51,7 @@ module.exports.getUsers = (req, res, next) => {
     )));
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   bcrypt.hash(req.body.password, 10)
     .then((hash) => User.create({
       name: req.body.name,
@@ -73,16 +69,22 @@ module.exports.createUser = (req, res) => {
     }))
     .catch((err) => {
       if (err.code === 11000) {
-        return res.status(409).send({ message: err.message });
+        next(
+          new EmailErrors(
+            'пользователь с таким email уже существует',
+          ),
+        );
       }
       if (err.name === 'ValidationError') {
-        return res.status(ERROR_CODE_400).send({
-          message: `${Object.values(err.errors)
-            .map((error) => error.message)
-            .join(', ')}`,
-        });
+        return next(
+          new BadRequestError(
+            'Переданы некорректные данные при создании карточки',
+          ),
+        );
       }
-      return res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' });
+      next(new DefaultErore(
+        'Ошибка по умолчанию',
+      ));
     });
 };
 
@@ -91,7 +93,9 @@ module.exports.getUser = (req, res, next) => {
   return User.findById(userId)
     .then((user) => {
       if (!user) {
-        res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
+        next(new NotFoundError(
+          'Пользователь по указанному _id не найден',
+        ));
       } else {
         res.send({ data: user });
       }
@@ -112,7 +116,7 @@ module.exports.updateUserInfo = (req, res, next) => {
     if (!update) {
       next(
         new NotFoundError(
-          'Переданы некорректные данные при создании карточки',
+          'Переданы некорректные данные карточки',
         ),
       );
     } else { res.send({ data: update }); }
@@ -120,12 +124,13 @@ module.exports.updateUserInfo = (req, res, next) => {
     if (err.name === 'ValidationError') {
       next(
         new BadRequestError(
-          'Переданы некорректные данные при создании карточки',
+          'Переданы некорректные данныекарточки',
         ),
       );
-    } else { next(new DefaultErore(
-      'Ошибка по умолчанию',
-    ));
+    } else {
+      next(new DefaultErore(
+        'Ошибка по умолчанию',
+      ));
     }
   });
 };
@@ -142,7 +147,7 @@ module.exports.updateUserAvatar = (req, res, next) => {
     if (!update) {
       next(
         new NotFoundError(
-          'Переданы некорректные данные при создании карточки',
+          'Переданы некорректные данные карточки',
         ),
       );
     } else { res.send({ data: update }); }
@@ -150,12 +155,13 @@ module.exports.updateUserAvatar = (req, res, next) => {
     if (err.name === 'ValidationError') {
       next(
         new BadRequestError(
-          'Переданы некорректные данные при создании карточки',
+          'Переданы некорректные данные карточки',
         ),
       );
-    } else { next(new DefaultErore(
-      'Ошибка по умолчанию',
-    ));
+    } else {
+      next(new DefaultErore(
+        'Ошибка по умолчанию',
+      ));
     }
   });
 };
