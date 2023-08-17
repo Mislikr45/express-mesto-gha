@@ -7,7 +7,6 @@ const ERROR_CODE_400 = 400;
 const ERROR_CODE_404 = 404;
 const ERROR_CODE_500 = 500;
 
-
 module.exports.getMe = (req, res) => {
   const { token } = req.cookies;
   const payload = jwt.decode(token);
