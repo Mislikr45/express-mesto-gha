@@ -6,7 +6,7 @@ const handleAuthError = (res) => {
     .send({ message: 'Необходима авторизация' });
 };
 
-const auth = (req, res) => {
+const auth = (req, res, next) => {
   const authorization = req.cookies.jwt;
   if (!authorization || !authorization.startsWith('')) {
     return handleAuthError(res.status(401).send({ message: 'Необходима авторизация' }));
@@ -19,7 +19,7 @@ const auth = (req, res) => {
     return handleAuthError(res);
   }
   req.user = payload._id; // записываем пейлоуд в объект запроса
-  return req.user;
+  next();
 };
 
 module.exports = auth;

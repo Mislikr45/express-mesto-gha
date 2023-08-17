@@ -1,5 +1,4 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const cookies = require('cookie-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -14,10 +13,9 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
-// app.use(express.json());
+app.use(express.json());
 app.use(cookies());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json({ extended: true }));
 app.use(cors());
 
 mongoose.connect(
