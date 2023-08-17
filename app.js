@@ -7,6 +7,7 @@ const routesUser = require('./routes/users');
 const routerCards = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
+const errorHandler = require('./middlewares/errorHandler');
 
 const { PORT = 3000 } = process.env;
 
@@ -41,22 +42,6 @@ app.post('/signup', celebrate({
 
 app.use(routesUser);
 app.use(routerCards);
-app.use((req, res, next) => {
-  next(new NotFoundError(
-    'Ресурс не найден',
-  ));
-});
 app.use(errors());
-app.use((err, res) => {
-  const { statusCode = 500, message } = err;
-
-  res
-    .status(statusCode)
-    .send({
-      // проверяем статус и выставляем сообщение в зависимости от него
-      message: statusCode === 500
-        ? 'На сервере произошла ошибка'
-        : message,
-    });
-});
+app.use(errorHandler);
 app.listen(PORT, () => { });

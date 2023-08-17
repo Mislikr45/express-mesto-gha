@@ -143,25 +143,15 @@ module.exports.updateUserAvatar = (req, res, next) => {
     payload._id,
     { avatar },
     { new: true },
-  ).then((update) => {
-    if (!update) {
-      next(
-        new NotFoundError(
-          'Переданы некорректные данные карточки',
-        ),
-      );
-    } else { res.send({ data: update }); }
-  }).catch((err) => {
-    if (err.name === 'ValidationError') {
-      next(
-        new BadRequestError(
-          'Переданы некорректные данные карточки',
-        ),
-      );
-    } else {
-      next(new DefaultErore(
-        'Ошибка по умолчанию',
-      ));
-    }
-  });
+  ).then((user) => {
+    if (user) return res.send(user);
+    throw new NotFoundError('Пользователь с таким id не найден');
+  })
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
+      } else {
+        next(err);
+      }
+    });
 };
