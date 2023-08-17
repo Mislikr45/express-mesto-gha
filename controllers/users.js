@@ -7,6 +7,8 @@ const ERROR_CODE_400 = 400;
 const ERROR_CODE_404 = 404;
 const ERROR_CODE_500 = 500;
 
+const url = require('../utils/constants');
+
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
@@ -58,7 +60,6 @@ module.exports.createUser = (req, res) => {
     }))
     .catch((err) => {
       if (err.code === 11000) {
-        // return res.send({ message: 'gbplf' })
         return res.status(409).send({ message: err.message });
       }
       if (err.name === 'ValidationError') {
