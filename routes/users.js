@@ -6,7 +6,7 @@ const {
   getUsers, getUser, updateUserInfo, updateUserAvatar, getMe,
 } = require('../controllers/users');
 
-const { url } = require('../utils/constants');
+const url = /^(https?:\/\/)?([A-Za-z0-9-]+\.)+[A-Za-z]{2,}(:\d{2,5})?(\/[^\s]*)?$/;
 
 router.get('/users/me', auth, getMe);
 
