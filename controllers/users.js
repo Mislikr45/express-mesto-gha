@@ -74,7 +74,6 @@ module.exports.createUser = (req, res) => {
     });
 };
 
-
 module.exports.getUser = (req, res) => {
   const { userId } = req.params;
   return User.findById(userId)
@@ -91,7 +90,8 @@ module.exports.updateUserInfo = (req, res) => {
   const { name, about } = req.body;
   const token = req.cookies.jwt;
   const payload = jwt.decode(token);
-  User.findByIdAndUpdate(payload._id,
+  User.findByIdAndUpdate(
+    payload._id,
     { name, about },
     { new: true },
   ).then((update) => {
@@ -109,7 +109,8 @@ module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   const token = req.cookies.jwt;
   const payload = jwt.decode(token);
-  User.findByIdAndUpdate(payload._id,
+  User.findByIdAndUpdate(
+    payload._id,
     { avatar },
     { new: true },
   ).then((update) => {

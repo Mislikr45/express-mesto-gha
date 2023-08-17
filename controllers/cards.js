@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
 const Card = require('../models/card');
 
 const ERROR_CODE_400 = 400;
