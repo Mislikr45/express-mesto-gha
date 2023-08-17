@@ -8,7 +8,6 @@ const {
 
 const url = /^(https?:\/\/)?([A-Za-z0-9-]+\.)+[A-Za-z]{2,}(:\d{2,5})?(\/[^\s]*)?$/;
 
-// роут users
 router.get('/users/me', auth, getMe);
 
 // роут users
@@ -35,7 +34,5 @@ router.patch('/users/me/avatar', auth, celebrate({
     avatar: Joi.string().pattern(url),
   }),
 }), updateUserAvatar);
-
-
 
 module.exports = router;
