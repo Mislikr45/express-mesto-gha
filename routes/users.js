@@ -36,4 +36,6 @@ router.patch('/users/me/avatar', auth, celebrate({
   }),
 }), updateUserAvatar);
 
+
+
 module.exports = router;

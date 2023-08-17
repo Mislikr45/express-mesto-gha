@@ -7,26 +7,6 @@ const ERROR_CODE_400 = 400;
 const ERROR_CODE_404 = 404;
 const ERROR_CODE_500 = 500;
 
-module.exports.getMe = (req, res) => {
-  const { token } = req.cookies;
-  const payload = jwt.decode(token);
-  const { userId } = payload.jwt;
-  // res.send(userId);
-  return User.findById(userId)
-    .then((user) => {
-      if (!user) {
-        res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
-      } else {
-        res.send({ data: user });
-      }
-    }).catch(() => res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }));
-};
-
-module.exports.getUsers = (req, res) => {
-  User.find({}).then((users) => res.send({ data: users }))
-    .catch(() => res.status(ERROR_CODE_500).send({ message: 'Произошла ошибка' }));
-};
-
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
@@ -40,6 +20,24 @@ module.exports.login = (req, res) => {
     .catch((err) => {
       res.status(401).send({ message: err.message });
     });
+};
+
+module.exports.getMe = (req, res) => {
+  const _id = req.user;
+  // res.send(_id);
+  return User.findById(_id)
+    .then((user) => {
+      if (!user) {
+        res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
+      } else {
+        res.send({ data: user });
+      }
+    }).catch(() => res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }));
+};
+
+module.exports.getUsers = (req, res) => {
+  User.find({}).then((users) => res.send({ data: users }))
+    .catch(() => res.status(ERROR_CODE_500).send({ message: 'Произошла ошибка' }));
 };
 
 module.exports.createUser = (req, res) => {
