@@ -97,9 +97,10 @@ module.exports.deleteLikeCard = (req, res, next) => {
   return Card.findByIdAndUpdate(cardId, { $pull: { likes: _id } }, { new: true })
     .then((card) => {
       if (!card) {
-        return next(new NotFoundError(
-          'Передан несуществующий _id карточки',
-        ));
+        throw new BadRequestError('Карточка с указанным id не найдена');
+        // return next(new NotFoundError(
+        //   'Передан несуществующий _id карточки',
+        // ));
       }
       return res.send({ data: card });
     })
