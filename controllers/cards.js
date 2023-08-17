@@ -66,9 +66,10 @@ module.exports.addLikeCard = (req, res, next) => {
   const { cardId } = req.params;
   const _id = req.user;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    return next(new BadRequestError(
-      'Переданы некорректные данные для постановки/снятии лайка.',
-    ));
+    // return next(new BadRequestError(
+    //   'Переданы некорректные данные для постановки/снятии лайка.',
+    // ));
+    throw new BadRequestError('Карточка с указанным id не найдена');
   }
   return Card.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, { new: true })
     .then((card) => {
@@ -88,9 +89,10 @@ module.exports.deleteLikeCard = (req, res, next) => {
   const { cardId } = req.params;
   const _id = req.user;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    return next(new BadRequestError(
-      'Переданы некорректные данные для постановки/снятии лайка.',
-    ));
+    // return next(new BadRequestError(
+    //   'Переданы некорректные данные для постановки/снятии лайка.',
+    // ));
+    throw new BadRequestError('Карточка с указанным id не найдена');
   }
   return Card.findByIdAndUpdate(cardId, { $pull: { likes: _id } }, { new: true })
     .then((card) => {
