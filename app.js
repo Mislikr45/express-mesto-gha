@@ -7,8 +7,8 @@ const routesUser = require('./routes/users');
 const routerCards = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const errorHandler = require('./middlewares/errorHandler');
+const NotFoundError = require('./errors/NotFoundError');
 
-const noWay = require('./middlewares/noWay');
 const { URL_REGEX } = require('./utils/constants');
 
 const { PORT = 3000 } = process.env;
@@ -45,6 +45,6 @@ app.post('/signup', celebrate({
 app.use(routesUser);
 app.use(routerCards);
 app.use(errors());
-app.use(noWay);
+app.use(() => { throw new NotFoundError('страница не найдена'); });
 app.use(errorHandler);
 app.listen(PORT, () => { });
