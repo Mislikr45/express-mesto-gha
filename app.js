@@ -7,6 +7,7 @@ const routesUser = require('./routes/users');
 const routerCards = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 
+
 const { PORT = 3000 } = process.env;
 
 const app = express();
@@ -43,7 +44,6 @@ app.use(routerCards);
 app.use((req, res) => { res.status(404).send({ message: 'Ресурс не найден' }); });
 app.use(errors());
 app.use((err, res) => {
-  // если у ошибки нет статуса, выставляем 500
   const { statusCode = 500, message } = err;
 
   res

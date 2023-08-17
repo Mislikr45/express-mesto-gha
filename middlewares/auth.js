@@ -9,7 +9,7 @@ const handleAuthError = (res) => {
 const auth = (req, res, next) => {
   const authorization = req.cookies.jwt;
   if (!authorization || !authorization.startsWith('')) {
-    return handleAuthError(res.status(401).send({ message: 'Необходима авторизация' }));
+    return handleAuthError(res);
   }
   const token = authorization.replace('Bearer ', '');
   let payload;
