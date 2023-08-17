@@ -69,10 +69,8 @@ module.exports.createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.code === 11000) {
-        next(
-          new EmailErrors(
-            'пользователь с таким email уже существует',
-          ),
+        throw new EmailErrors(
+          'пользователь с таким email уже существует',
         );
       }
       if (err.name === 'ValidationError') {
