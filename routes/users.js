@@ -9,12 +9,10 @@ const {
 const url = /^(https?:\/\/)?([A-Za-z0-9-]+\.)+[A-Za-z]{2,}(:\d{2,5})?(\/[^\s]*)?$/;
 
 // роут users
-router.get('/users', auth, celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
-  }),
-}), getUsers);
+router.get('/users/me', auth, getMe);
+
+// роут users
+router.get('/users', auth, getUsers);
 
 // роут /users/:userId
 router.get('/users/:userId', auth, celebrate({
@@ -37,8 +35,5 @@ router.patch('/users/me/avatar', auth, celebrate({
     avatar: Joi.string().pattern(url),
   }),
 }), updateUserAvatar);
-
-// роут users
-router.get('/users/me', auth, getMe);
 
 module.exports = router;
