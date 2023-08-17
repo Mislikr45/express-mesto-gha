@@ -6,6 +6,7 @@ const { celebrate, Joi, errors } = require('celebrate');
 const routesUser = require('./routes/users');
 const routerCards = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
+const NotFoundError = require('./errors/NotFoundError');
 
 const { PORT = 3000 } = process.env;
 
@@ -40,7 +41,11 @@ app.post('/signup', celebrate({
 
 app.use(routesUser);
 app.use(routerCards);
-app.use((req, res) => { res.status(404).send({ message: 'Ресурс не найден' }); });
+app.use((req, res, next) => {
+  next(new NotFoundError(
+    'Ресурс не найден',
+  ));
+});
 app.use(errors());
 app.use((err, res) => {
   const { statusCode = 500, message } = err;
