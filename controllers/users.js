@@ -24,7 +24,7 @@ module.exports.login = (req, res, next) => {
       res.send({ user, token });
     })
     .catch(() => next(new AuthorizationError(
-      'Ошибка авторизации',
+      { message: 'Ошибка авторизации' },
     )));
 };
 
@@ -33,9 +33,7 @@ module.exports.getMe = (req, res, next) => {
   return User.findById(_id)
     .then((user) => {
       if (!user) {
-        next(new NotFoundError(
-          'Пользователь по указанному _id не найден',
-        ));
+        next(new NotFoundError({ message: 'Пользователь по указанному _id не найден' }));
       } else {
         res.send({ data: user });
       }
@@ -71,7 +69,7 @@ module.exports.createUser = (req, res, next) => {
       if (err.code === 11000) {
         next(
           new EmailErrors(
-            'пользователь с таким email уже существует',
+            { message: 'пользователь с таким email уже существует' },
           ),
         );
       }
