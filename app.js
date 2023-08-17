@@ -16,7 +16,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cookies());
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
@@ -27,7 +27,6 @@ mongoose.connect(
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
-    password: Joi.string().required().min(8),
     email: Joi.string().required().email(),
   }),
 }), login);
@@ -35,7 +34,6 @@ app.post('/signin', celebrate({
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
-    password: Joi.string().required().min(6),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
     avatar: Joi.string().pattern(url),
@@ -46,17 +44,17 @@ app.use(routesUser);
 app.use(routerCards);
 app.use((req, res) => { res.status(404).send({ message: 'Ресурс не найден' }); });
 app.use(errors());
-app.use((err, res) => {
-  // если у ошибки нет статуса, выставляем 500
-  const { statusCode = 500, message } = err;
+// app.use((err, res) => {
+//   // если у ошибки нет статуса, выставляем 500
+//   const { statusCode = 500, message } = err;
 
-  res
-    .status(statusCode)
-    .send({
-      // проверяем статус и выставляем сообщение в зависимости от него
-      message: statusCode === 500
-        ? 'На сервере произошла ошибка'
-        : message,
-    });
-});
+//   res
+//     .status(statusCode)
+//     .send({
+//       // проверяем статус и выставляем сообщение в зависимости от него
+//       message: statusCode === 500
+//         ? 'На сервере произошла ошибка'
+//         : message,
+//     });
+// });
 app.listen(PORT, () => { });

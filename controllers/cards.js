@@ -11,10 +11,9 @@ module.exports.getCards = (req, res) => {
 };
 
 module.exports.createCard = (req, res) => {
-  const { token } = req.cookies;
-  const payload = jwt.decode(token);
+  const _id = req.user;
   const { name, link } = req.body;
-  Card.create({ name, link, owner: payload._id })
+  Card.create({ name, link, owner: _id })
     .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -33,11 +32,9 @@ module.exports.deleteCard = (req, res) => {
   const { cardId } = req.params;
   return Card.findByIdAndRemove(cardId)
     .then((card) => {
-      const { token } = req.cookies;
-      const payload = jwt.decode(token);
-      const userId = payload._id;
+      const _id = req.user;
       if (!card) { return res.status(ERROR_CODE_404).send({ message: ' Карточка с указанным _id не найдена' }); }
-      if (String(card.owner) !== String(userId)) {
+      if (String(card.owner) !== String(_id)) {
         return res
           .status(403)
           .json({ message: 'You do not have permission to delete this card' });
@@ -49,13 +46,11 @@ module.exports.deleteCard = (req, res) => {
 
 module.exports.addLikeCard = (req, res) => {
   const { cardId } = req.params;
-  const { token } = req.cookies;
-  const payload = jwt.decode(token);
-  const userId = payload._id;
+  const _id = req.user;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
     return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' });
   }
-  return Card.findByIdAndUpdate(cardId, { $addToSet: { likes: userId } }, { new: true })
+  return Card.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, { new: true })
     .then((card) => {
       if (!card) { res.status(ERROR_CODE_404).send({ message: 'Передан несуществующий _id карточки' }); }
       res.status(201).send({ data: card });
@@ -65,13 +60,11 @@ module.exports.addLikeCard = (req, res) => {
 
 module.exports.deleteLikeCard = (req, res) => {
   const { cardId } = req.params;
-  const { token } = req.cookies;
-  const payload = jwt.decode(token);
-  const userId = payload._id;
+  const _id = req.user;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
     return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные для постановки/снятии лайка.' });
   }
-  return Card.findByIdAndUpdate(cardId, { $pull: { likes: userId } }, { new: true })
+  return Card.findByIdAndUpdate(cardId, { $pull: { likes: _id } }, { new: true })
     .then((card) => {
       if (!card) { res.status(ERROR_CODE_404).send({ message: 'Передан несуществующий _id карточки' }); }
       res.send({ data: card });

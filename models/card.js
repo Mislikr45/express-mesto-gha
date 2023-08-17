@@ -11,14 +11,22 @@ const cardSchema = new mongoose.Schema({
     type: String,
     minlength: 2,
     required: true,
+    validate: {
+      validator: function isLinkValid(v) {
+        return /^(https?:\/\/)?([A-Za-z0-9-]+\.)+[A-Za-z]{2,}(:\d{2,5})?(\/[^\s]*)?$/.test(
+          v,
+        );
+      },
+      message: 'Неверный формат ссылки',
+    },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'user',
     required: true,
   },
   likes: {
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
   },
   createdAt: {
     type: Date,
