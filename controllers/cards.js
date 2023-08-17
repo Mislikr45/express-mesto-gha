@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
 const Card = require('../models/card');
 
-const ERROR_CODE_400 = 400;
-const ERROR_CODE_404 = 404;
-const ERROR_CODE_500 = 500;
 // 400
 const BadRequestError = require('../errors/BadRequestError');
 // 404

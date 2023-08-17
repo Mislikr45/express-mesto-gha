@@ -7,24 +7,33 @@ const ERROR_CODE_400 = 400;
 const ERROR_CODE_404 = 404;
 const ERROR_CODE_500 = 500;
 
-const url = require('../utils/constants');
+// 400
+const BadRequestError = require('../errors/BadRequestError');
+// 404
+const NotFoundError = require('../errors/NotFoundError');
+// 500
+const DefaultErore = require('../errors/DefaultErore');
+// 409
+const EmailErrors = require('../errors/EmailErrors');
+// 401
+const AuthorizationError = require('../errors/AuthorizationError');
 
-module.exports.login = (req, res) => {
+
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const payload = { _id: user._id };
       const token = jwt.sign(payload, 'super-strong-secret', { expiresIn: '7d' });
-
       res.cookie('jwt', token);
       res.send({ user, token });
     })
-    .catch((err) => {
-      res.status(401).send({ message: err.message });
-    });
+    .catch(() => next(new AuthorizationError(
+      'Ошибка авторизации',
+    )));
 };
 
-module.exports.getMe = (req, res) => {
+module.exports.getMe = (req, res, next) => {
   const _id = req.user;
   // res.send(_id);
   return User.findById(_id)
@@ -34,12 +43,16 @@ module.exports.getMe = (req, res) => {
       } else {
         res.send({ data: user });
       }
-    }).catch(() => res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }));
+    }).catch(() => next(new DefaultErore(
+      'Ошибка по умолчанию',
+    )));
 };
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({}).then((users) => res.send({ data: users }))
-    .catch(() => res.status(ERROR_CODE_500).send({ message: 'Произошла ошибка' }));
+    .catch(() => next(new DefaultErore(
+      'Ошибка по умолчанию',
+    )));
 };
 
 module.exports.createUser = (req, res) => {
@@ -73,7 +86,7 @@ module.exports.createUser = (req, res) => {
     });
 };
 
-module.exports.getUser = (req, res) => {
+module.exports.getUser = (req, res, next) => {
   const { userId } = req.params;
   return User.findById(userId)
     .then((user) => {
@@ -82,10 +95,12 @@ module.exports.getUser = (req, res) => {
       } else {
         res.send({ data: user });
       }
-    }).catch(() => res.status(ERROR_CODE_500).send({ message: 'Ошибка по 1 умолчанию' }));
+    }).catch(() => next(new DefaultErore(
+      'Ошибка по умолчанию',
+    )));
 };
 
-module.exports.updateUserInfo = (req, res) => {
+module.exports.updateUserInfo = (req, res, next) => {
   const { name, about } = req.body;
   const token = req.cookies.jwt;
   const payload = jwt.decode(token);
@@ -94,17 +109,28 @@ module.exports.updateUserInfo = (req, res) => {
     { name, about },
     { new: true },
   ).then((update) => {
-    if (!update) { return res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' }); }
-    return res.send({ data: update });
-  })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE_400).send({ message: 'Ошибка по умолчанию' });
-      } else { res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }); }
-    });
+    if (!update) {
+      next(
+        new NotFoundError(
+          'Переданы некорректные данные при создании карточки',
+        ),
+      );
+    } else { res.send({ data: update }); }
+  }).catch((err) => {
+    if (err.name === 'ValidationError') {
+      next(
+        new BadRequestError(
+          'Переданы некорректные данные при создании карточки',
+        ),
+      );
+    } else { next(new DefaultErore(
+      'Ошибка по умолчанию',
+    ));
+    }
+  });
 };
 
-module.exports.updateUserAvatar = (req, res) => {
+module.exports.updateUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
   const token = req.cookies.jwt;
   const payload = jwt.decode(token);
@@ -114,11 +140,22 @@ module.exports.updateUserAvatar = (req, res) => {
     { new: true },
   ).then((update) => {
     if (!update) {
-      res.status(ERROR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
+      next(
+        new NotFoundError(
+          'Переданы некорректные данные при создании карточки',
+        ),
+      );
     } else { res.send({ data: update }); }
   }).catch((err) => {
     if (err.name === 'ValidationError') {
-      res.status(ERROR_CODE_400).send({ message: 'Ошибка по умолчанию' });
-    } else { res.status(ERROR_CODE_500).send({ message: 'Ошибка по умолчанию' }); }
+      next(
+        new BadRequestError(
+          'Переданы некорректные данные при создании карточки',
+        ),
+      );
+    } else { next(new DefaultErore(
+      'Ошибка по умолчанию',
+    ));
+    }
   });
 };
