@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const cookies = require('cookie-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -13,10 +14,10 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
-app.use(express.json());
+// app.use(express.json());
 app.use(cookies());
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
 mongoose.connect(
@@ -45,17 +46,17 @@ app.use(routesUser);
 app.use(routerCards);
 app.use((req, res) => { res.status(404).send({ message: 'Ресурс не найден' }); });
 app.use(errors());
-// app.use((err, res) => {
-//   // если у ошибки нет статуса, выставляем 500
-//   const { statusCode = 500, message } = err;
+app.use((err, res) => {
+  // если у ошибки нет статуса, выставляем 500
+  const { statusCode = 500, message } = err;
 
-//   res
-//     .status(statusCode)
-//     .send({
-//       // проверяем статус и выставляем сообщение в зависимости от него
-//       message: statusCode === 500
-//         ? 'На сервере произошла ошибка'
-//         : message,
-//     });
-// });
+  res
+    .status(statusCode)
+    .send({
+      // проверяем статус и выставляем сообщение в зависимости от него
+      message: statusCode === 500
+        ? 'На сервере произошла ошибка'
+        : message,
+    });
+});
 app.listen(PORT, () => { });
