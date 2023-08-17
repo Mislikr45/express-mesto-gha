@@ -35,7 +35,7 @@ module.exports.deleteCard = (req, res, next) => {
   Card.findById(cardId)
     .then((card) => {
       if (!card) {
-        return next(new NotFoundError(
+        next(new NotFoundError(
           ' Карточка с указанным _id не найдена',
         ));
       }
@@ -46,9 +46,10 @@ module.exports.deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(cardId)
     .then((card) => {
       const _id = req.user;
-      if (!card) { return next(new NotFoundError(
-        ' Карточка с указанным _id не найдена',
-      ));
+      if (!card) {
+        return next(new NotFoundError(
+          ' Карточка с указанным _id не найдена',
+        ));
       } if (String(card.owner) !== String(_id)) {
         return res
           .status(403)
@@ -98,7 +99,7 @@ module.exports.deleteLikeCard = (req, res, next) => {
           'Передан несуществующий _id карточки',
         ));
       }
-      res.send({ data: card });
+      return res.send({ data: card });
     })
     .catch(() => next(new DefaultErore(
       'Ошибка по умолчанию',

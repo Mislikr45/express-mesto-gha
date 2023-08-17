@@ -7,7 +7,6 @@ const routesUser = require('./routes/users');
 const routerCards = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 
-
 const { PORT = 3000 } = process.env;
 
 const app = express();

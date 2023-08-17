@@ -82,7 +82,7 @@ module.exports.createUser = (req, res, next) => {
           ),
         );
       }
-      next(new DefaultErore(
+      return next(new DefaultErore(
         'Ошибка по умолчанию',
       ));
     });
