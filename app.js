@@ -6,8 +6,8 @@ const { celebrate, Joi, errors } = require('celebrate');
 const routesUser = require('./routes/users');
 const routerCards = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
-const NotFoundError = require('./errors/NotFoundError');
 const errorHandler = require('./middlewares/errorHandler');
+const { URL_REGEX } = require('./utils/constants');
 
 const { PORT = 3000 } = process.env;
 
@@ -35,7 +35,7 @@ app.post('/signup', celebrate({
     email: Joi.string().required().email(),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(/^(https?:\/\/)?([A-Za-z0-9-]+\.)+[A-Za-z]{2,}(:\d{2,5})?(\/[^\s]*)?$/),
+    avatar: Joi.string().pattern(URL_REGEX),
     password: Joi.string().required(),
   }),
 }), createUser);
