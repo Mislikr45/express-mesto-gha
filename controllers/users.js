@@ -29,8 +29,8 @@ module.exports.login = (req, res, next) => {
 };
 
 module.exports.getMe = (req, res, next) => {
-  const _id = req.user;
-  return User.findById(_id)
+  const id = req.user._id;
+  return User.findById(id)
     .then((user) => {
       if (!user) {
         next(new NotFoundError(
@@ -100,9 +100,9 @@ module.exports.getUser = (req, res, next) => {
 
 module.exports.updateUserInfo = (req, res, next) => {
   const { name, about } = req.body;
-  const _id = req.user;
+  const id = req.user._id;
   User.findByIdAndUpdate(
-    _id,
+    id,
     { name, about },
     { new: true, runValidators: true },
   ).then((user) => {
@@ -120,9 +120,9 @@ module.exports.updateUserInfo = (req, res, next) => {
 
 module.exports.updateUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
-  const _id = req.user;
+  const id = req.user._id;
   User.findByIdAndUpdate(
-    _id,
+    id,
     { avatar },
     { new: true, runValidators: true },
   ).then((user) => {
