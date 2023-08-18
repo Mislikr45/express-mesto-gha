@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const auth = require('../middlewares/auth');
 const { URL_REGEX } = require('../utils/constants');
 
 const {
@@ -8,9 +7,9 @@ const {
 } = require('../controllers/cards');
 
 // роутер /cards
-router.get('/cards', auth, getCards);
+router.get('/cards', getCards);
 
-router.post('/cards', auth, celebrate({
+router.post('/cards', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     link: Joi.string().required().pattern(URL_REGEX),
@@ -19,7 +18,7 @@ router.post('/cards', auth, celebrate({
 
 // роутер /cards/:cardId удаление карточки
 
-router.delete('/cards/:cardId', auth, celebrate({
+router.delete('/cards/:cardId', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().length(24).hex().required(),
   }),
@@ -27,13 +26,13 @@ router.delete('/cards/:cardId', auth, celebrate({
 
 // роутер /cards/:cardId/likes
 
-router.put('/cards/:cardId/likes', auth, celebrate({
+router.put('/cards/:cardId/likes', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().length(24).hex().required(),
   }),
 }), addLikeCard);
 
-router.delete('/cards/:cardId/likes', auth, celebrate({
+router.delete('/cards/:cardId/likes', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().length(24).hex().required(),
   }),

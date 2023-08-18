@@ -1,26 +1,25 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const auth = require('../middlewares/auth');
 const { URL_REGEX } = require('../utils/constants');
 
 const {
   getUsers, getUser, updateUserInfo, updateUserAvatar, getMe,
 } = require('../controllers/users');
 
-router.get('/users/me', auth, getMe);
+router.get('/users/me', getMe);
 
 // роут users
-router.get('/users', auth, getUsers);
+router.get('/users', getUsers);
 
 // роут /users/:userId
-router.get('/users/:userId', auth, celebrate({
+router.get('/users/:userId', celebrate({
   params: Joi.object().keys({
     userId: Joi.string().length(24).hex().required(),
   }),
 }), getUser);
 
 // роут /users/me
-router.patch('/users/me', auth, celebrate({
+router.patch('/users/me', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
@@ -28,7 +27,7 @@ router.patch('/users/me', auth, celebrate({
 }), updateUserInfo);
 
 // роут /users/me/avatar
-router.patch('/users/me/avatar', auth, celebrate({
+router.patch('/users/me/avatar', celebrate({
   body: Joi.object().keys({
     avatar: Joi.string().pattern(URL_REGEX),
   }),

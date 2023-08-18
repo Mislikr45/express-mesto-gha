@@ -6,6 +6,8 @@ const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 // 500
 const DefaultErore = require('../errors/DefaultErore');
+// 403
+const AcessError = require('../errors/AcessError');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({}).then((cards) => res.send({ data: cards })).catch((error) => next(error));
@@ -41,16 +43,21 @@ module.exports.deleteCard = (req, res, next) => {
     }).then((card) => {
       const id = req.user._id;
       if (String(card.owner) !== String(id)) {
-        next(res
-          .status(403)
-          .json({ message: 'Нет прав для удаления карточки' }));
+        next(new AcessError(
+          ' Нет прав для удаления карточки',
+        ));
       } else {
-        Card.findByIdAndRemove(cardId).then((cards) => { res.send({ data: cards }); });
+        Card.findByIdAndRemove(cardId).then((cards) => { res.send({ data: cards })})
+          .catch((err) => { next(err); });
       }
     })
-    .catch(() => next(new DefaultErore(
-      'Ошибка по умолчанию',
-    )));
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        next(new BadRequestError('Переданы некорректные данные'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.addLikeCard = (req, res, next) => {
@@ -68,9 +75,13 @@ module.exports.addLikeCard = (req, res, next) => {
       }
       return res.send({ data: card });
     })
-    .catch(() => next(new DefaultErore(
-      'Ошибка по умолчанию',
-    )));
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        next(new BadRequestError('Переданы некорректные данные'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.deleteLikeCard = (req, res, next) => {
