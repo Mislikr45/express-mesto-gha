@@ -94,7 +94,7 @@ module.exports.addLikeCard = (req, res, next) => {
 module.exports.deleteLikeCard = (req, res, next) => {
   const { cardId } = req.params;
   const _id = req.user;
-  return Card.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, {
+  return Card.findByIdAndUpdate(cardId, { $pull: { likes: _id } }, {
     new: true,
     runValidators: true,
   })
