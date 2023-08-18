@@ -29,7 +29,7 @@ module.exports.login = (req, res, next) => {
 };
 
 module.exports.getMe = (req, res, next) => {
-  const { _id } = req.user._id;
+  const _id = req.user;
   return User.findById(_id)
     .then((user) => {
       if (!user) {
@@ -100,7 +100,7 @@ module.exports.getUser = (req, res, next) => {
 
 module.exports.updateUserInfo = (req, res, next) => {
   const { name, about } = req.body;
-  const { _id } = req.user._id;
+  const _id = req.user;
   User.findByIdAndUpdate(
     _id,
     { name, about },
@@ -120,7 +120,7 @@ module.exports.updateUserInfo = (req, res, next) => {
 
 module.exports.updateUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
-  const { _id } = req.user._id;
+  const _id = req.user;
   User.findByIdAndUpdate(
     _id,
     { avatar },

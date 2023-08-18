@@ -16,7 +16,7 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
-app.use(express.json());
+// app.use(express.json());
 app.use(cookies());
 app.use(express.json({ extended: true }));
 app.use(cors());
@@ -43,7 +43,7 @@ app.post('/signup', celebrate({
   }),
 }), createUser);
 
-app.use(auth);
+// app.use(auth);
 
 app.use(routesUser);
 app.use(routerCards);

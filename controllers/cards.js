@@ -12,7 +12,7 @@ module.exports.getCards = (req, res, next) => {
 };
 
 module.exports.createCard = (req, res, next) => {
-  const { _id } = req.user;
+  const _id = req.user;
   const { name, link } = req.body;
   Card.create({ name, link, owner: _id })
     .then((card) => res.status(201).send({ data: card }))
@@ -41,39 +41,39 @@ module.exports.deleteCard = (req, res, next) => {
       'Ошибка по умолчанию',
     )));
 
-  // Card.findById(cardId)
-  //   .then((card) => {
-  //     if (!card) {
-  //       next(new NotFoundError(
-  //         ' Карточка с указанным _id не найдена',
-  //       ));
-  //     }
-  //   }).catch(() => next(new DefaultErore(
-  //     'Ошибка по умолчанию',
-  //   )));
+  Card.findById(cardId)
+    .then((card) => {
+      if (!card) {
+        next(new NotFoundError(
+          ' Карточка с указанным _id не найдена',
+        ));
+      }
+    }).catch(() => next(new DefaultErore(
+      'Ошибка по умолчанию',
+    )));
 
-  // Card.findByIdAndRemove(cardId)
-  //   .then((card) => {
-  //     const _id = req.user;
-  //     if (!card) {
-  //       return next(new NotFoundError(
-  //         ' Карточка с указанным _id не найдена',
-  //       ));
-  //     } if (String(card.owner) !== String(_id)) {
-  //       return res
-  //         .status(403)
-  //         .json({ message: 'Переданы некорректные данные' });
-  //     }
-  //     return res.send({ data: card });
-  //   })
-  //   .catch(() => next(new DefaultErore(
-  //     'Ошибка по умолчанию',
-  //   )));
+  Card.findByIdAndRemove(cardId)
+    .then((card) => {
+      const _id = req.user;
+      if (!card) {
+        return next(new NotFoundError(
+          ' Карточка с указанным _id не найдена',
+        ));
+      } if (String(card.owner) !== String(_id)) {
+        return res
+          .status(403)
+          .json({ message: 'Переданы некорректные данные' });
+      }
+      return res.send({ data: card });
+    })
+    .catch(() => next(new DefaultErore(
+      'Ошибка по умолчанию',
+    )));
 };
 
 module.exports.addLikeCard = (req, res, next) => {
   const { cardId } = req.user;
-  const _id = req.params;
+  const _id = req.user;
   return Card.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, {
     new: true,
     runValidators: true,
@@ -93,7 +93,7 @@ module.exports.addLikeCard = (req, res, next) => {
 
 module.exports.deleteLikeCard = (req, res, next) => {
   const { cardId } = req.user;
-  const _id = req.params;
+  const _id = req.user;
   return Card.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, {
     new: true,
     runValidators: true,
