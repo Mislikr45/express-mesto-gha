@@ -39,12 +39,12 @@ module.exports.deleteCard = (req, res, next) => {
         ));
       } return card;
     }).then((card) => {
-res.send(card.owner, req.params_id);
-      // if (String(card.owner) !== String(req.params_id)) {
-      //   return next(res
-      //     .status(403)
-      //     .json({ message: 'Нет прав для удаления карточки' }));
-      // } return res.send({ data: card });
+      const id = req.user._id;
+      if (String(card.owner) !== String(id)) {
+        return next(res
+          .status(403)
+          .json({ message: 'Нет прав для удаления карточки' }));
+      } return res.send({ data: card });
     })
     .catch(() => next(new DefaultErore(
       'Ошибка по умолчанию',
