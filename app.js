@@ -47,7 +47,7 @@ app.use(auth);
 
 app.use(routesUser);
 app.use(routerCards);
-router.use((req, res, next) => next(new NotFoundError('Страницы по запрошенному URL не существует')));
+app.use(() => { throw new NotFoundError('страница не найдена'); });
 app.use(errors());
 
 app.use(errorHandler);
