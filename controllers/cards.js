@@ -44,7 +44,7 @@ module.exports.deleteCard = (req, res, next) => {
         return next(res
           .status(403)
           .json({ message: 'Переданы некорректные данные' }));
-      }
+      } return card;
     }).then((card) => {
       const { owner: cardOwnerId } = card;
       if (cardOwnerId.valueOf() !== req.params_id) {
