@@ -39,18 +39,10 @@ module.exports.deleteCard = (req, res, next) => {
         ));
       } return card;
     }).then((card) => {
-      const { owner: cardOwnerId } = card;
-      if (cardOwnerId.valueOf() !== req.params_id) {
+      if (String(card.owner) !== String(req.params_id)) {
         return next(res
           .status(403)
           .json({ message: 'Нет прав для удаления карточки' }));
-      } return card;
-    }).then((card) => {
-      const { owner: cardOwnerId } = card;
-      if (cardOwnerId.valueOf() !== req.params_id) {
-        next(new NotFoundError(
-          ' Карточка с указанным _id не найдена',
-        ));
       } return res.send({ data: card });
     })
     .catch(() => next(new DefaultErore(
