@@ -54,12 +54,12 @@ module.exports.deleteCard = (req, res, next) => {
 
   Card.findByIdAndRemove(cardId)
     .then((card) => {
-      const _id = req.user;
+      const id = req.user._id;
       if (!card) {
         return next(new NotFoundError(
           ' Карточка с указанным _id не найдена',
         ));
-      } if (String(card.owner) !== String(_id)) {
+      } if (String(card.owner) !== String(id)) {
         return res
           .status(403)
           .json({ message: 'Переданы некорректные данные' });
@@ -73,8 +73,8 @@ module.exports.deleteCard = (req, res, next) => {
 
 module.exports.addLikeCard = (req, res, next) => {
   const { cardId } = req.params;
-  const _id = req.user;
-  return Card.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, {
+  const id = req.user._id;
+  return Card.findByIdAndUpdate(cardId, { $addToSet: { likes: id } }, {
     new: true,
     runValidators: true,
   })
@@ -93,8 +93,8 @@ module.exports.addLikeCard = (req, res, next) => {
 
 module.exports.deleteLikeCard = (req, res, next) => {
   const { cardId } = req.params;
-  const _id = req.user;
-  return Card.findByIdAndUpdate(cardId, { $pull: { likes: _id } }, {
+  const id = req.user._id;
+  return Card.findByIdAndUpdate(cardId, { $pull: { likes: id } }, {
     new: true,
     runValidators: true,
   })
