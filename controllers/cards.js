@@ -88,7 +88,11 @@ module.exports.deleteLikeCard = (req, res, next) => {
       }
       return res.send({ data: card });
     })
-    .catch(() => next(new DefaultErore(
-      'Ошибка по умолчанию',
-    )));
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        next(new BadRequestError('Переданны некоректные данные по карточке'));
+      } else {
+        next(err);
+      }
+    });
 };
