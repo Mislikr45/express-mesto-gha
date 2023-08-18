@@ -30,16 +30,6 @@ module.exports.createCard = (req, res, next) => {
 
 module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
-  Card.findById(cardId)
-    .then((card) => {
-      if (!card) {
-        next(new NotFoundError(
-          ' Карточка с указанным _id не найдена',
-        ));
-      }
-    }).catch(() => next(new DefaultErore(
-      'Ошибка по умолчанию',
-    )));
 
   Card.findById(cardId)
     .then((card) => {
@@ -48,28 +38,48 @@ module.exports.deleteCard = (req, res, next) => {
           ' Карточка с указанным _id не найдена',
         ));
       }
-    }).catch(() => next(new DefaultErore(
-      'Ошибка по умолчанию',
-    )));
-
-  Card.findByIdAndRemove(cardId)
-    .then((card) => {
-      const id = req.user._id;
-      if (!card) {
-        return next(new NotFoundError(
-          ' Карточка с указанным _id не найдена',
-        ));
-      } if (String(card.owner) !== String(id)) {
-        return res
+    }).then((card) => {
+      const { owner: cardOwnerId } = card;
+      if (cardOwnerId.valueOf() !== req.params_id) {
+        return next(res
           .status(403)
-          .json({ message: 'Переданы некорректные данные' });
+          .json({ message: 'Переданы некорректные данные' }));
       }
-      return res.send({ data: card });
+    }).then((card) => {
+      const { owner: cardOwnerId } = card;
+      if (cardOwnerId.valueOf() !== req.params_id) {
+        next(new NotFoundError(
+          ' Карточка с указанным _id не найдена',
+        ));
+      } return res.send({ data: card });
     })
     .catch(() => next(new DefaultErore(
       'Ошибка по умолчанию',
     )));
 };
+
+//     .catch(() => next(new DefaultErore(
+//       'Ошибка по умолчанию',
+//     )));
+
+//   Card.findByIdAndRemove(cardId)
+//     .then((card) => {
+//       const id = req.user._id;
+//       if (!card) {
+//         return next(new NotFoundError(
+//           ' Карточка с указанным _id не найдена',
+//         ));
+//       } if (String(card.owner) !== String(id)) {
+//         return next(res
+//           .status(403)
+//           .json({ message: 'Переданы некорректные данные' }));
+//       }
+//       return res.send({ data: card });
+//     })
+//     .catch(() => next(new DefaultErore(
+//       'Ошибка по умолчанию',
+//     )));
+// };
 
 module.exports.addLikeCard = (req, res, next) => {
   const { cardId } = req.params;
