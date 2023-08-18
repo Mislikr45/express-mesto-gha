@@ -41,10 +41,12 @@ module.exports.deleteCard = (req, res, next) => {
     }).then((card) => {
       const id = req.user._id;
       if (String(card.owner) !== String(id)) {
-        return next(res
+        next(res
           .status(403)
           .json({ message: 'Нет прав для удаления карточки' }));
-      } return res.send({ data: card });
+      } else {
+        Card.findByIdAndRemove(cardId).then((cards) => { res.send({ data: cards }); });
+      }
     })
     .catch(() => next(new DefaultErore(
       'Ошибка по умолчанию',
