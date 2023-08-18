@@ -13,7 +13,7 @@ module.exports.getCards = (req, res, next) => {
 };
 
 module.exports.createCard = (req, res, next) => {
-  const _id = req.user;
+  const { _id } = req.user._id;
   const { name, link } = req.body;
   Card.create({ name, link, owner: _id })
     .then((card) => res.status(201).send({ data: card }))
@@ -63,22 +63,19 @@ module.exports.deleteCard = (req, res, next) => {
 };
 
 module.exports.addLikeCard = (req, res, next) => {
-  const { cardId } = req.params;
+  const { cardId } = req.params._id;
   const _id = req.user;
-  if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    // return next(new BadRequestError(
-    //   'Переданы некорректные данные для постановки/снятии лайка.',
-    // ));
-    throw new BadRequestError('Карточка с указанным id не найдена');
-  }
-  return Card.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, { new: true })
+  return Card.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, {
+    new: true,
+    runValidators: true,
+  })
     .then((card) => {
       if (!card) {
         return next(new NotFoundError(
           'Передан несуществующий _id карточки',
         ));
       }
-      return res.status(201).send({ data: card });
+      return res.send({ data: card });
     })
     .catch(() => next(new DefaultErore(
       'Ошибка по умолчанию',
@@ -86,15 +83,12 @@ module.exports.addLikeCard = (req, res, next) => {
 };
 
 module.exports.deleteLikeCard = (req, res, next) => {
-  const { cardId } = req.params;
+  const { cardId } = req.params._id;
   const _id = req.user;
-  if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    // return next(new BadRequestError(
-    //   'Переданы некорректные данные для постановки/снятии лайка.',
-    // ));
-    throw new BadRequestError('Карточка с указанным id не найдена');
-  }
-  return Card.findByIdAndUpdate(cardId, { $pull: { likes: _id } }, { new: true })
+  return Card.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, {
+    new: true,
+    runValidators: true,
+  })
     .then((card) => {
       if (!card) {
         return next(new NotFoundError(

@@ -29,7 +29,7 @@ module.exports.login = (req, res, next) => {
 };
 
 module.exports.getMe = (req, res, next) => {
-  const _id = req.user;
+  const { _id } = req.user._id;
   return User.findById(_id)
     .then((user) => {
       if (!user) {
@@ -69,22 +69,12 @@ module.exports.createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.code === 11000) {
-        next(
-          new EmailErrors(
-            'пользователь с таким email уже существует',
-          ),
-        );
+        next(new EmailErrors('Пользователь с таким электронным адресом уже зарегистрирован'));
+      } else if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные при регистрации пользователя'));
+      } else {
+        next(err);
       }
-      if (err.name === 'ValidationError') {
-        return next(
-          new BadRequestError(
-            'Переданы некорректные данные при создании карточки',
-          ),
-        );
-      }
-      return next(new DefaultErore(
-        'Ошибка по умолчанию',
-      ));
     });
 };
 
@@ -99,50 +89,42 @@ module.exports.getUser = (req, res, next) => {
       } else {
         res.send({ data: user });
       }
-    }).catch(() => next(new DefaultErore(
-      'Ошибка по умолчанию',
-    )));
+    }).catch((err) => {
+      if (err.name === 'CastError') {
+        next(new DefaultErore('Передан некорректный id'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.updateUserInfo = (req, res, next) => {
   const { name, about } = req.body;
-  const token = req.cookies.jwt;
-  const payload = jwt.decode(token);
+  const { _id } = req.user._id;
   User.findByIdAndUpdate(
-    payload._id,
+    _id,
     { name, about },
-    { new: true },
-  ).then((update) => {
-    if (!update) {
-      next(
-        new NotFoundError(
-          'Переданы некорректные данные карточки',
-        ),
-      );
-    } else { res.send({ data: update }); }
-  }).catch((err) => {
-    if (err.name === 'ValidationError') {
-      next(
-        new BadRequestError(
-          'Переданы некорректные данныекарточки',
-        ),
-      );
-    } else {
-      next(new DefaultErore(
-        'Ошибка по умолчанию',
-      ));
-    }
-  });
+    { new: true, runValidators: true },
+  ).then((user) => {
+    if (user) return res.send(user);
+    throw new NotFoundError('Пользователь с таким id не найден');
+  })
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.updateUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
-  const token = req.cookies.jwt;
-  const payload = jwt.decode(token);
+  const { _id } = req.user._id;
   User.findByIdAndUpdate(
-    payload._id,
+    _id,
     { avatar },
-    { new: true },
+    { new: true, runValidators: true },
   ).then((user) => {
     if (user) return res.send(user);
     throw new NotFoundError('Пользователь с таким id не найден');
