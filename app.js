@@ -16,6 +16,7 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
+app.use(express.json());
 app.use(cookies());
 app.use(express.json({ extended: true }));
 app.use(cors());
@@ -46,7 +47,7 @@ app.use(auth);
 
 app.use(routesUser);
 app.use(routerCards);
-// router.use((req, res, next) => next(new NotFoundError('Страницы по запрошенному URL не существует')));
+router.use((req, res, next) => next(new NotFoundError('Страницы по запрошенному URL не существует')));
 app.use(errors());
 
 app.use(errorHandler);
