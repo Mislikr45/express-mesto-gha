@@ -4,8 +4,6 @@ const Card = require('../models/card');
 const BadRequestError = require('../errors/BadRequestError');
 // 404
 const NotFoundError = require('../errors/NotFoundError');
-// 500
-const DefaultErore = require('../errors/DefaultErore');
 // 403
 const AcessError = require('../errors/AcessError');
 
@@ -47,7 +45,7 @@ module.exports.deleteCard = (req, res, next) => {
           ' Нет прав для удаления карточки',
         ));
       } else {
-        Card.findByIdAndRemove(cardId).then((cards) => { res.send({ data: cards })})
+        Card.findByIdAndRemove(cardId).then((cards) => { res.send({ data: cards }); })
           .catch((err) => { next(err); });
       }
     })
