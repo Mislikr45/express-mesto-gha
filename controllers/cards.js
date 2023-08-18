@@ -53,29 +53,6 @@ module.exports.deleteCard = (req, res, next) => {
     )));
 };
 
-//     .catch(() => next(new DefaultErore(
-//       'Ошибка по умолчанию',
-//     )));
-
-//   Card.findByIdAndRemove(cardId)
-//     .then((card) => {
-//       const id = req.user._id;
-//       if (!card) {
-//         return next(new NotFoundError(
-//           ' Карточка с указанным _id не найдена',
-//         ));
-//       } if (String(card.owner) !== String(id)) {
-//         return next(res
-//           .status(403)
-//           .json({ message: 'Переданы некорректные данные' }));
-//       }
-//       return res.send({ data: card });
-//     })
-//     .catch(() => next(new DefaultErore(
-//       'Ошибка по умолчанию',
-//     )));
-// };
-
 module.exports.addLikeCard = (req, res, next) => {
   const { cardId } = req.params;
   const id = req.user._id;
