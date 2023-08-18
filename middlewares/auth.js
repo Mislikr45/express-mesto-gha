@@ -13,7 +13,7 @@ const auth = (req, res, next) => {
   } catch (err) {
     return next(new AuthorizationError('Необходима авторизация'));
   }
-  req.user = payload._id; // записываем пейлоуд в объект запроса
+  req.user = payload; // записываем пейлоуд в объект запроса
   return next();
 };
 
