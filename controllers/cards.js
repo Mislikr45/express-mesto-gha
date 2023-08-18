@@ -72,7 +72,7 @@ module.exports.deleteCard = (req, res, next) => {
 };
 
 module.exports.addLikeCard = (req, res, next) => {
-  const { cardId } = req.user;
+  const { cardId } = req.params;
   const _id = req.user;
   return Card.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, {
     new: true,
@@ -92,7 +92,7 @@ module.exports.addLikeCard = (req, res, next) => {
 };
 
 module.exports.deleteLikeCard = (req, res, next) => {
-  const { cardId } = req.user;
+  const { cardId } = req.params;
   const _id = req.user;
   return Card.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, {
     new: true,
